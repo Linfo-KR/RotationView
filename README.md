@@ -1,6 +1,6 @@
-# SeaRoute: 해상 노선 시각화 플랫폼
+# RotationView: 해상 노선 시각화 플랫폼
 
-**SeaRoute**는 기존 `PortInfoMapper` 프로젝트를 확장하여, 전 세계 해상 운송 노선(Service Route)과 항구(Port), 그리고 상세 기항지 정보(Proforma Schedule)를 웹 상에서 시각적으로 탐색하고 관리할 수 있는 모던 웹 애플리케이션입니다.
+**RotationView**는 기존 `PortInfoMapper` (또는 `SeaRoute`) 프로젝트를 확장하여, 전 세계 해상 운송 노선(Service Route)과 항구(Port), 그리고 상세 기항지 정보(Proforma Schedule)를 웹 상에서 시각적으로 탐색하고 관리할 수 있는 모던 웹 애플리케이션입니다.
 
 기존의 CSV 데이터 처리 및 PPT 자동 생성 기능에 더해, **PostgreSQL(SQLite) 데이터베이스**, **FastAPI 백엔드**, 그리고 **React 프론트엔드(예정)** 기반의 대화형 플랫폼으로 진화했습니다.
 
@@ -25,7 +25,7 @@
 ## 📂 프로젝트 구조 (Project Structure)
 
 ```
-PortInfoMapper/
+RotationView/
 ├── backend/                 # Backend API 서버 (FastAPI)
 │   ├── app/
 │   │   ├── main.py          # API 엔드포인트 정의
@@ -43,7 +43,7 @@ PortInfoMapper/
 │   └── etl.py               # CSV -> DB 데이터 적재 (ETL)
 ├── docs/                    # 프로젝트 문서
 ├── README.md                # 메인 문서
-└── searoute.db              # SQLite 데이터베이스 파일 (로컬 개발용)
+└── rotationview.db              # SQLite 데이터베이스 파일 (로컬 개발용)
 ```
 
 ## 💾 데이터베이스 스키마 (Database Schema)
@@ -101,7 +101,7 @@ pip install -r backend/requirements.txt
 
 ### 2. 데이터 적재 (ETL)
 
-CSV 파일의 데이터를 데이터베이스(`searoute.db`)에 적재합니다. 초기 실행 시 또는 데이터 업데이트 시 실행합니다.
+CSV 파일의 데이터를 데이터베이스(`rotationview.db`)에 적재합니다. 초기 실행 시 또는 데이터 업데이트 시 실행합니다.
 
 ```bash
 python scripts/etl.py

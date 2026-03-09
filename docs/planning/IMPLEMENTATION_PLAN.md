@@ -1,10 +1,10 @@
-# SeaRoute: 웹 애플리케이션 개발 실행 계획
+# RotationView: 웹 애플리케이션 개발 실행 계획
 
-이 문서는 `PortInfoMapper` PoC(개념 증명) 프로젝트를 기반으로, 실제 사용자를 위한 대화형 선박 노선 시각화 웹 애플리케이션 **"SeaRoute"** 를 구축하기 위한 구체적인 실행 계획을 정의합니다.
+이 문서는 `PortInfoMapper` PoC(개념 증명) 프로젝트를 기반으로, 실제 사용자를 위한 대화형 선박 노선 시각화 웹 애플리케이션 **"RotationView"** 를 구축하기 위한 구체적인 실행 계획을 정의합니다.
 
 ## 1. 시스템 아키텍처
 
-SeaRoute 애플리케이션은 다음과 같은 3-Tier 아키텍처를 따릅니다.
+RotationView 애플리케이션은 다음과 같은 3-Tier 아키텍처를 따릅니다.
 
 - **Frontend (Client-Side):** 사용자가 직접 상호작용하는 웹 인터페이스입니다. React와 Leaflet.js를 사용하여 동적인 지도 시각화와 사용자 경험(UX)을 제공합니다.
 - **Backend (Server-Side):** 데이터 처리, 비즈니스 로직, API 제공을 담당합니다. FastAPI를 사용하여 빠르고 효율적인 RESTful API 서버를 구축합니다.

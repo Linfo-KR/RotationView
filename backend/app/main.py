@@ -12,7 +12,7 @@ from fastapi.middleware.cors import CORSMiddleware
 # DB 테이블 생성 (서버 시작 시 자동 생성)
 models.Base.metadata.create_all(bind=engine)
 
-app = FastAPI(title="SeaRoute API", version="0.1.0")
+app = FastAPI(title="RotationView API", version="0.1.0")
 
 # CORS 설정
 origins = [
@@ -242,7 +242,7 @@ def fix_port_mismatch(fix_data: schemas.PortMismatchFix, db: Session = Depends(g
 
 @app.get("/")
 def read_root():
-    return {"message": "Welcome to SeaRoute API. Visit /docs for API documentation."}
+    return {"message": "Welcome to RotationView API. Visit /docs for API documentation."}
 
 @app.get("/api/health")
 def health_check():
