@@ -106,7 +106,8 @@ const RotationTimeline = ({ selectedRoute, isOpen, onClose, onToggle }) => {
         <div className="relative border-l-2 border-slate-800 pl-5 ml-2.5 space-y-6">
           {rotationList.map((portName, idx) => {
             const isBusan = portName.toLowerCase().includes('busan');
-            const matchedProforma = isBusan ? proformaList : [];
+            // seq 매칭을 통해 모든 기항지의 proforma 데이터 연동
+            const matchedProforma = proformaList.filter(prof => prof.seq === idx + 1);
 
             return (
               <div key={`${portName}-${idx}`} className="relative">
@@ -147,29 +148,33 @@ const RotationTimeline = ({ selectedRoute, isOpen, onClose, onToggle }) => {
                     )}
                   </div>
 
-                  {/* 🚢 부산항 터미널 Proforma 정보 연동 카드 */}
-                  {isBusan && matchedProforma.length > 0 && (
-                    <div className="mt-3 pt-3 border-t border-emerald-500/10 space-y-2">
+                  {/* 🚢 기항지별 터미널 Proforma 정보 연동 카드 (PDF와 100% 매칭) */}
+                  {matchedProforma.length > 0 && (
+                    <div className={`mt-3 pt-3 border-t space-y-2 ${isBusan ? 'border-emerald-500/10' : 'border-slate-700/50'}`}>
                       {matchedProforma.map((prof, pIdx) => (
                         <div
                           key={`prof-${pIdx}`}
-                          className="bg-emerald-950/30 border border-emerald-500/15 rounded-lg p-2.5 space-y-1.5 text-xs text-slate-300"
+                          className={`border rounded-lg p-2.5 space-y-1.5 text-xs ${
+                            isBusan
+                              ? 'bg-emerald-950/30 border-emerald-500/15 text-slate-300'
+                              : 'bg-slate-900/40 border-slate-700/60 text-slate-300'
+                          }`}
                         >
                           <div className="flex items-center justify-between">
-                            <span className="font-bold text-emerald-300 flex items-center gap-1">
-                              🏢 {prof.terminal_name}
+                            <span className={`font-bold flex items-center gap-1 ${isBusan ? 'text-emerald-300' : 'text-cyan-400'}`}>
+                              🏢 Terminal: {prof.terminal_name}
                             </span>
                             <span className="text-[10px] bg-slate-800 text-slate-400 px-1.5 rounded">
                               Seq: {prof.seq}
                             </span>
                           </div>
                           
-                          <div className="grid grid-cols-2 gap-1 text-[11px] text-slate-400">
+                          <div className="grid grid-cols-1 gap-1 text-[11px] text-slate-400">
                             <div>
-                              📦 WTP: <strong className="text-slate-200">{prof.wtp || 'N/A'}</strong>
+                              📦 Weekly Throughput: <strong className="text-slate-200">{prof.wtp || '-'} TEU</strong>
                             </div>
-                            <div className="text-right">
-                              📅 스케줄: <strong className="text-slate-200">{prof.sch || 'N/A'}</strong>
+                            <div>
+                              📅 Schedule: <strong className="text-slate-200">{prof.sch || '-'}</strong>
                             </div>
                           </div>
                         </div>
