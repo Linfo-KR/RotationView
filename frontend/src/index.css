@@ -150,17 +150,23 @@ body {
   border-width: 1.5px !important;
 }
 
+/* 일반 피더 라벨은 줌이 낮을 때 가림 (겹침 방지 Collision Avoidance) */
 .leaflet-container.zoom-low .port-label {
+  display: none;
+}
+
+.leaflet-container.zoom-low .port-marker:hover .port-label {
   display: block;
-  font-size: 9px;
+  z-index: 999;
 }
 
 .leaflet-container.zoom-low .seq-badge {
   display: none;
 }
 
-/* 줌 Low에서도 부산/출발·종착항 라벨 항상 표시 */
+/* 줌 Low에서도 부산/관문/출발·종착항 라벨은 항상 표시해 뼈대 유지 */
 .leaflet-container.zoom-low .port-highlight .port-label,
+.leaflet-container.zoom-low .port-chokepoint .port-label,
 .leaflet-container.zoom-low .port-start-end .port-label {
   display: block;
   font-size: 10px;
@@ -313,4 +319,32 @@ body {
 
 .route-tooltip-ob::before, .route-tooltip-ib::before {
   display: none !important; /* 깔끔하고 미니멀한 팝업 꼬리 팁 제거 */
+}
+
+/* ═══════════════════════════════════════════
+   핵심 관문 (Chokepoint) 커스텀 데코레이션
+   ═══════════════════════════════════════════ */
+.port-chokepoint {
+  z-index: 110;
+}
+
+.chokepoint-icon-wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: rgba(15, 23, 42, 0.95);
+  border-radius: 50%;
+  padding: 4px;
+  border: 1.8px solid #ffcc00;
+  box-shadow: 0 0 10px rgba(255, 204, 0, 0.55);
+}
+
+.port-chokepoint .port-label {
+  color: #ffcc00;
+  font-weight: 800;
+  font-size: 11px;
+}
+
+.leaflet-container.dark-theme .chokepoint-icon-wrapper {
+  background-color: rgba(26, 26, 46, 0.95);
 }

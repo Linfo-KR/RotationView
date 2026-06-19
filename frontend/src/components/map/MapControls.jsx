@@ -10,21 +10,46 @@ const createPortIcon = (portName, index, total) => {
   const isBusan = name.toLowerCase().includes('busan');
   const isStart = index === 0;
   const isEnd = index === total - 1;
+  const isChokepoint = 
+    name.toLowerCase().includes('panama') ||
+    name.toLowerCase().includes('suez') ||
+    name.toLowerCase().includes('gibraltar') ||
+    name.toLowerCase().includes('malacca') ||
+    name.toLowerCase().includes('singapore');
+
   let markerClass = '';
-  if (isBusan) markerClass = 'port-highlight';
-  else if (isStart || isEnd) markerClass = 'port-start-end';
+  let dotHtml = '<div class="port-dot"></div>';
+
+  if (isBusan) {
+    markerClass = 'port-highlight';
+  } else if (isChokepoint) {
+    markerClass = 'port-chokepoint';
+    dotHtml = `
+      <div class="chokepoint-icon-wrapper animate-pulse">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#ffcc00" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="chokepoint-svg">
+          <circle cx="12" cy="5" r="3" />
+          <line x1="12" y1="8" x2="12" y2="22" />
+          <line x1="5" y1="12" x2="19" y2="12" />
+          <path d="M12 22a7 7 0 0 0 7-7" />
+          <path d="M12 22a7 7 0 0 1-7-7" />
+        </svg>
+      </div>
+    `;
+  } else if (isStart || isEnd) {
+    markerClass = 'port-start-end';
+  }
 
   return L.divIcon({
     className: 'custom-div-icon',
     html: `
       <div class="port-marker ${markerClass}">
-        <div class="port-dot"></div>
+        ${dotHtml}
         <div class="port-label">${name}</div>
         ${index !== undefined ? `<div class="seq-badge">${index + 1}</div>` : ''}
       </div>
     `,
-    iconSize: [20, 20],
-    iconAnchor: [10, 10],
+    iconSize: [24, 24],
+    iconAnchor: [12, 12],
   });
 };
 
