@@ -67,20 +67,33 @@ export const makeBezierCurve = (points) => {
  * @param {number} baseIntervalKm - 줌 레벨별 기준 화살표 간격 (km)
  * @returns {Array<{lat: number, lng: number, bearing: number}>} 화살표 마커 데이터 배열
  */
+// Turf.js along 연산 병목 제거를 위한 인메모리 화살표 캐시 맵 선언
+const arrowCache = new Map();
+
 export const getEquidistantArrows = (points, baseIntervalKm = 400) => {
   if (!points || points.length < 2) return [];
+  
+  // 1. O(1) 초고속 캐시 키 생성 (첫점, 끝점, 배열 길이 및 간격 조합)
+  const startPt = points[0];
+  const endPt = points[points.length - 1];
+  const cacheKey = `${startPt[0].toFixed(4)}_${startPt[1].toFixed(4)}_${endPt[0].toFixed(4)}_${endPt[1].toFixed(4)}_${points.length}_${baseIntervalKm}`;
+  
+  if (arrowCache.has(cacheKey)) {
+    return arrowCache.get(cacheKey);
+  }
+
   try {
-    // 1. Turf.js 용 [lng, lat] 변환 (unwrapped 궤적 보존)
+    // 2. Turf.js 용 [lng, lat] 변환 (unwrapped 궤적 보존)
     const normalizedPoints = points.map(p => [p[1], p[0]]);
 
     const line = turf.lineString(normalizedPoints);
     const totalLength = turf.length(line, { units: 'kilometers' });
     
-    // 2. 지리적 실거리 $L$에 비례하는 지수 감쇠 화살표 밀도 스케일러 적용
+    // 3. 지리적 실거리 $L$에 비례하는 지수 감쇠 화살표 밀도 스케일러 적용
     const adjustedInterval = baseIntervalKm * (1.0 + 3.0 * Math.exp(-totalLength / 600.0));
     const arrowPoints = [];
     
-    // 3. 단구간 예외 처리: 구간 총 거리가 조절된 간격보다 짧은 경우 중앙에 1개만 배치
+    // 4. 단구간 예외 처리: 구간 총 거리가 조절된 간격보다 짧은 경우 중앙에 1개만 배치
     if (totalLength < adjustedInterval) {
       if (totalLength > MAP_SETTINGS.ARROW_MIN_LEG_DISTANCE_KM) {
         const midDist = totalLength / 2;
@@ -95,10 +108,11 @@ export const getEquidistantArrows = (points, baseIntervalKm = 400) => {
           bearing: bearing
         });
       }
+      arrowCache.set(cacheKey, arrowPoints);
       return arrowPoints;
     }
 
-    // 4. Multi-leg: adjustedInterval 간격으로 균등 배치
+    // 5. Multi-leg: adjustedInterval 간격으로 균등 배치
     let currentDistance = adjustedInterval / 2;
     while (currentDistance < totalLength) {
       const pt1 = turf.along(line, Math.max(0, currentDistance - 2), { units: 'kilometers' });
@@ -115,6 +129,8 @@ export const getEquidistantArrows = (points, baseIntervalKm = 400) => {
       
       currentDistance += adjustedInterval;
     }
+    
+    arrowCache.set(cacheKey, arrowPoints);
     return arrowPoints;
   } catch (e) {
     console.warn("Arrow generation failed", e);
