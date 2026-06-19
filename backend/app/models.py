@@ -35,6 +35,7 @@ class Route(Base):
     __tablename__ = "TB_ROUTE"
 
     route_idx = Column(Integer, primary_key=True, index=True, autoincrement=True, comment="노선 인덱스 (PK)")
+    year = Column(Integer, index=True, nullable=False, default=2026, comment="기항 노선 기준 연도")
     svc = Column(String, index=True, nullable=True, comment="서비스 코드 (BPA SERVICE CODE)")
     route_name = Column(String, nullable=True, comment="노선명")
     

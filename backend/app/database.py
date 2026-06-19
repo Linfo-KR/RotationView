@@ -1,14 +1,38 @@
+"""
+데이터베이스 연결 설정.
+
+환경변수(.env)에서 DB 접속 정보를 읽어 SQLAlchemy 엔진을 구성합니다.
+"""
+import os
+
+from dotenv import load_dotenv
 from sqlalchemy import create_engine
+from sqlalchemy.engine import URL
 from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy.orm import sessionmaker
+from sqlalchemy.orm import sessionmaker, Session
 
-# 개발 단계에서는 SQLite를 사용하고, 프로덕션에서는 PostgreSQL 사용을 권장합니다.
-# 현재는 파일 기반 SQLite DB로 빠르게 프로토타이핑합니다.
-SQLALCHEMY_DATABASE_URL = "sqlite:///./rotationview.db"
+# .env 파일에서 환경변수 로드
+load_dotenv(os.path.join(os.path.dirname(os.path.dirname(__file__)), '.env'))
 
-engine = create_engine(
-    SQLALCHEMY_DATABASE_URL, connect_args={"check_same_thread": False}
+SQLALCHEMY_DATABASE_URL = URL.create(
+    drivername="postgresql",
+    username=os.getenv("DB_USER", "postgres"),
+    password=os.getenv("DB_PASSWORD", ""),
+    host=os.getenv("DB_HOST", "localhost"),
+    port=int(os.getenv("DB_PORT", "5432")),
+    database=os.getenv("DB_NAME", "rotation_db"),
 )
+
+engine = create_engine(SQLALCHEMY_DATABASE_URL)
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
 Base = declarative_base()
+
+
+def get_db():
+    """FastAPI Dependency: 각 요청마다 DB 세션을 생성하고 종료합니다."""
+    db = SessionLocal()
+    try:
+        yield db
+    finally:
+        db.close()

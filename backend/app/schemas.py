@@ -42,6 +42,7 @@ class Proforma(ProformaBase):
 
 # --- Route Schemas ---
 class RouteBase(BaseModel):
+    year: int = 2026
     svc: Optional[str] = None
     route_name: Optional[str] = None
     region_idx: int = 0
@@ -60,7 +61,7 @@ class Route(RouteBase):
     route_idx: int
     updated_at: Optional[datetime] = None
     proforma: List[Proforma] = []
-    line_geometry: Optional[List[List[float]]] = None # Add line geometry field
+    line_geometry: Optional[Any] = None  # Route geometry (outbound, inbound, arrows)
 
     class Config:
         from_attributes = True
