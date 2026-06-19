@@ -1,0 +1,62 @@
+{
+    "file_paths": {
+        "input_csv": "data/test/proforma_test.csv",
+        "output_ppt": "data/test/pptx_automate_test.pptx"
+    },
+    "slide_dimensions": {
+        "width": 33.867,
+        "height": 19.05
+    },
+    "colors": {
+        "WHITE": [255, 255, 255],
+        "BLACK": [0, 0, 0],
+        "BOX_REGION_BG": [0, 51, 153],
+        "SERVICE_NAME_BG": [230, 238, 240],
+        "TABLE_HEADER_BG": [0, 32, 96],
+        "PROFORMA_HEADER_BG": [0, 37, 112]
+    },
+    "elements": {
+        "box_region": {
+            "pos": {"left": 1.0, "top": 1.0},
+            "size": {"width": 7.5, "height": 2.5},
+            "font": {"name": "Arial", "size": 28, "bold": true, "color": "WHITE"},
+            "fill": "BOX_REGION_BG",
+            "align": "CENTER"
+        },
+        "box_service_name": {
+            "pos": {"left": 8.7, "top": 1.0},
+            "size": {"width": 24.0, "height": 2.5},
+            "font": {"name": "Arial", "size": 20, "bold": true, "color": "BLACK"},
+            "fill": "SERVICE_NAME_BG",
+            "align": "CENTER"
+        },
+        "tbl_service_info": {
+            "pos": {"left": 8.7, "top": 4.0},
+            "size": {"width": 24.3, "height": 3.0},
+            "header_font": {"name": "Arial", "size": 14, "bold": true, "color": "WHITE"},
+            "header_fill": "TABLE_HEADER_BG",
+            "body_font": {"name": "Arial", "size": 12, "bold": true, "color": "BLACK"},
+            "columns": {
+                "Carriers": {"width": 5.5, "align": "CENTER"},
+                "Dur": {"width": 1.3, "align": "CENTER"},
+                "Freq": {"width": 1.3, "align": "CENTER"},
+                "Ships": {"width": 3.1, "align": "CENTER"},
+                "PortRotation": {"width": 13.1, "align": "LEFT"}
+            }
+        },
+        "tbl_proforma": {
+            "pos": {"left": 8.7, "top": 7.5},
+            "gap": 0.2,
+            "max_count": 3,
+            "size": {"width": 6.4, "height": 2.9},
+            "header_font": {"name": "Arial", "size": 12, "bold": true, "color": "WHITE"},
+            "header_fill": "PROFORMA_HEADER_BG",
+            "body_font": {"name": "Arial", "size": 12, "bold": true, "color": "BLACK"},
+            "columns": {
+                "header": {"width": 2.8},
+                "body": {"width": 3.6}
+            },
+            "rows": ["Terminal", "Weekly throughput", "Schedule"]
+        }
+    }
+}

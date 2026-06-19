@@ -1,0 +1,374 @@
+No,Name,Region,SVC,Sch,ShipCo,ShipNo,ShipClass,Wtp,Atp,Rotation
+1,HKT,CKJ,CJ1,Sat16 ~ Sun08,PCL1/CKL1,2,1000,550,30000,Busan(BPT) - Niigata - Toyama - Kanazawa - Ulsan - Busan(HKT) - Gwangyang (KIT) - Ningbo - Shanghai
+2,HKT,CKJ,CKJ,Wed13 ~ Thu10,CKL1,1,1000,800,37000,Xingang - Dalian - Pohang - Busan - Niigata - Toyamashinko - Naoetsu
+3,HKT,CKJ,CKJ1,Wed08 ~ Wed21,KMTC1,1,1096,800,40000,Xingang - Dalian - Pohang - Busan - Niigata - Toyamashinko - Naoetsu
+4,HKT,CKJ,NCJ,Tue04 ~ Wed00,KMTC2/NSL1,3,1000,800,52000,Busan(BPTS) - Shimizu - Onahama - Sendai - Kamashi - Niigata - Sakaiminato - Busan(HKT) - Ulsan - Gwangyang(GWCT) - Xingang - Qingdao
+5,HKT,CKJ,NCQ,Tue05 ~ Tue22,KMTC2/NSL1,3,1000,800,40000,Busan(HKT) - Niigata - Akita - Tomakomai - Hachinohe - Sendai - Hitachinaka - Busan(BCT) - Busan(BPTS) - Ulsan - Gwangyang(GWCT) - Qingdao - Dalian
+6,HKT,CHN,AK3,Sun17~Mon06,COH,1,4200,1500,75000,"Busan(HJNC, BNCT) - Busan(HKT) - Xingang-Dalian"
+7,HKT,CHN,AK4,Sun19 ~ Mon06,COH,1,1700,1000,48000,Busan(HKT) - Busan(DGT) - Lianyungang - Qingdao
+8,HKT,CHN,AK6,Sun09 ~ Mon08,COH,1,1400,1000,51000,Busan(HKT) - Gwangyang(KIT) - Ningbo - Shanghai
+9,HKT,CHN,BSN,Sat05 ~ Sun02,NSL,1,1000,800,40000,Shanghai - Ningbo - Busan(HKT) - Ulsan - Gwangyang(GWCT)
+10,HKT,CHN,CNS2,Sat05 ~ Sun02,KMTC,1,1000,850,47000,Lianyungang - Qingdao - Busan(HKT) - Ulsan - Gwangyang(GWCT)
+11,HKT,JPN,BKS1,"Mon08 ~ Mon16
+Thu12 ~ Thu20",DJS,1,728,800,42000,Busan(HKT) - Busan(New) -  Hakata - Tokuyama - Moji - Hibiki - Busan(HKT) - Moji - Tokuyama - Hakata
+12,HKT,JPN,BJ1,Fri03 ~ Fri21,NSL,1,1000,900,45000,Busan - Hiroshima - Iyomishima - Matsuyama - Imabari - Iyomishima - Mizushima - Hakata
+13,HKT,JPN,JEH1,Sat07 ~Sat23,KMTC,1,700,850,42000,Ulsan - Busan(HKT) - Osaka - Kobe - Mizushima - Fukuyama - Hiroshima - Oita 
+14,HKT,JPN,JES1,Tue11 ~ Wed03,KMTC,1,300,400,21000,Busan - Tokushima -Takamatsu - Imabari - Mizushima - Iwakuni
+15,HKT,JPN,JES2,Wed03 ~ Wed21,KMTC2,2,300,350,20000,Busan - Hiroshima - Iyomishima - Matsuyama
+16,HKT,JPN,JKK,Fri16~Sat11,KMTC,2,300,400,21000,Busan - Moji - Shibushi - Sendai
+17,HKT,JPN,JWK1,Sun07 ~ Sun19,KMTC,2,300,400,18000,Busan - Nagasaki - Kumamoto  - Yatsushiro - Sendai- Iwakuni
+18,HKT,JPN,JKS2,Wed08 ~ Thu13,KMTC,1,700,600,30000,Busan - Sakaiminato - Kanazawa -Tsuruga - Maizuru - Imari
+19,HKT,JPN,JP1,"Sat09 ~ Sat15
+Mon12 ~ Mon19",PCL,1,704,500,23000,Incheon - Busan(HKT) - Kobe - Osaka - Mizushima
+20,HKT,JPN,KJH,"Wed21 ~ Thu05
+Sun03~Sun18",CKL,1,600,600,30000,Incheon - Busan - Kobe - Osaka - Mizushima - Busan
+21,HKT,JPN,KJK,"Mon13~Tue07
+Fri10~Fri22
+Thu13~Fri07",CKL,2,845,1200,60000,Incheon - Busan - Shimizu - Tokyo - Yokohama - Nagoya - Busan
+22,HKT,JPN,KJS,"Wed08~Wed18
+Mon20~Tue06",TYS,1,700,500,23000,Incheon - Busan - Kobe - Osaka - Busan - Incheon
+23,HKT,RUS,BRX,Thu14-Fri14,CKL,1,679,500,25000,Busan(HKT)-Pohang-Vladivostok
+24,HKT,Intra-Asia,ANX, Sun14 ~ Mon05,KMTC2/SKR/NSL,4,2500,1400,72000,Incheon - Busan(HKT) - Ulsan - Shanghai - Ho Chi Minh -  Laem Chabang - Jakarta - Ho Chi Minh - Hong Kong - Shekou - Incheon
+25,HKT,Intra-Asia,CKI2,Thu06 ~ Fri00,KMTC,4,1800,1500,83000,Busan(HKT) - Gwangyang(KIT) - Shanghai - Ningbo - Jakarta - Surabaya - Ho Chi Minh - Shanghai
+26,HKT,Intra-Asia,HPX,Fri06 ~ Fri19,CKL,2,1000,500,26000,Incheon - (Gunsan) - Busan(HKT) - Haiphong - Qinzhou - Xiamen
+27,HKT,Intra-Asia,KCM3,Sat12 ~ Sun12,"KMTC1/YML1/
+SITC1/ONE1",4,2800,2600,132000,Busan(HKT) - Shanghai - Xiamen - Singapore - Port Kelang - Pasir Gudang - Laem Chabang - Shekou - Busan
+28,HKT,Intra-Asia,KHX,Sun06 ~ Mon16,SML1/DYS1,2,1000,600,28000,Incheon - (Gunsan) - Gwangyang - Busan - Haiphong - Xiamen - Incheon
+29,HKT,Intra-Asia,KI1,Sat14 ~ Sun12,KMTC/SKR,4,2800,2200,111000,Gwangyang(KIT) - Ulsan - Busan(HKT) - Busan(BCT) - Hong Kong - Singapore - Jakarta - Surabaya - Hongkong
+30,HKT,Intra-Asia,KMS3,"Mon12 ~ Tue01
+Wed-Thu",KMTC,4,2800,2200,125000,Busan(HKT) - Pohang - Ulsan -  Gwangyang(KIT) - Shanghai - Singapore - Port Kelang North - Penang - Singapore - Hong Kong - Shanghai - Busan(HKT)
+31,HKT,Intra-Asia,KPX,Fri08 ~ Sat01,KMTC2/NSL1,3,1860,1100,55000,Incheon - Pyongtaek-Gwangyang(KIT) - Pohang - Busan(HKT) - Manila(North) - Ho Chi Minh - Hong Kong - Shekou
+32,HKT,Intra-Asia,KSH,Tue20 ~ Wed10,KMTC1/CKL1,2,1000,900,45000,Busan(HKT) - Gwangyang(HKT) - Shanghai - Haiphong
+33,HKT,Intra-Asia,KTS,Thu05 ~ Fri06,KMTC2/SKR1,3,1600,1600,81000,Busan(HKT) - Ulsan - Hong Kong - Ho Chi Minh - Laem Chabang - Bangkok -  Laem Chabang - Hong kong - Shekou - Keelung
+34,HKT,Intra-Asia,KVX1,Fri18 ~ Sat15,KMTC/CKL/POL,3,1800,800,38000,Incheon - Busan(HKT) - Shanghai - Ho Chi Minh - Laem Chabang - Bangkok - Laem Chabang - Ho Chi Minh 
+35,HKT,Intra-Asia,NKT,Fri00 ~ Fri15,KMTC/NSL/CKL,3,1700,1100,54000,Incheon - Gwangyang(KIT) - Busan(HKT) - Hong Kong - Shekou - Laem Chabang - Bangkok - Laem Chabang - Hochiminh
+36,HKT,Intra-Asia,VTS,Wed12 ~ Thu06,KMTC/SKR/CKL,3,1800,1800,94000,Busan(HKT) - Kwangyang(KIT) - Hong kong - Ho Chi Minh - Laem Chabang - Bangkok - Laem Chabang - Hong kong - Xiamen
+37,HKT,Intra-Asia,VTX,Wed15 ~ Thu04,SML/NSL/POL,3,1700,1100,57000,Gwangyang(GWCT) - Busan(HKT) - Shanghai - Ho Chi Minh - Bangkok - Laem Chabang - Ho Chi Minh 
+38,BPTS,CHN,CKX1,12Tue~08Wed,SKR,1,850,950,46639,Busan-Ulsan-Gwangyang-Ningbo-Shanghai-Tianjinxingang-Tianjinxingang-Lianyungang
+39,BPTS,CHN,BXQ,12Sat~09Sun,NSL,1,960,1000,37332,Busan-Ulsan-Kwangyang-Tianjinxingang
+40,BPTS,CHN,BNJ,06Sat ~ 18Sat,DYL,1,710,900,39733,Busan-Gwangyang-Nanjing-Zhangjiangang-Busan
+41,BPTS,CHN,NKX,09Wed~23Wed,SKR,1,600,1150,51931,Busan-Gwangyang-Nanjing-Zhangjiangang
+42,BPTS,CHN,KCI,09Tue~03Wed,TSL/ONE/SIT/NSL,1,2500,1600,69759,Busan-Qingtao-Shanghai-Ningbo-Jakarta-Surabaya-Shekou-Xiamen
+43,BPTS,JPN,JSW1,10Sun~23Sun,HAS,1,700,650,29821,Busan(BPTS)-Busan(BCT)-Tsuruga-Kanazawa-Maizuru-Sakaiminato
+44,BPTS,JPN,JSW2,"02Sun~18Sun
+09Wed~23Wed",SKR,2,1100,500,48892,Busan(BPTS)-Busan(BCT)-Niigata-Toyama-Kanazawa-Hamada-Busan(BCT-BPTS)-Okgye-Busan(BPTS)
+45,BPTS,JPN,BKH,23Mon ~ 09Wed,NSL1,1,950,900,47837,Busan-Tokyo-Kawasaki-Yokohama-Nagoya-Busan
+46,BPTS,JPN,HS2,"08Mon~23Mon
+08Wed~13Wed
+08Sat~23Sat",POL/HAS/DJS,1,700,700,65536,Busan-Osaka-Kobe-Ulsan-Busan-Osaka-Kobe-Gwangyang-Busan-Osaka-Kobe
+47,BPTS,JPN,"HS2
+(KJS7)","08Mon~23Mon
+08Wed~13Wed
+08Sat~23Sat",DYL/NSL/SKR,1,700,700,44040,Busan-Osaka-Kobe-Ulsan-Busan-Osaka-Kobe-Gwangyang-Busan-Osaka-Kobe
+48,BPTS,JPN,KJS1,15Fri~06Sat,SKR,2,1500,850,52484,Gwangyang-Busan-Tokyo-Yokohama-Nagoya-Toyohashi-ShimizuShizuoka
+49,BPTS,JPN,JEK1,09Sat~23Sat,KMTC,1,1000,800,44409,Ulsan-Busan-Tokyo-Chiba-Yokohama-Tomakomai-Niigata-Nagoya-Yokkaichi
+50,BPTS,JPN,JEK2,22Mon~18Tue,KMTC,1,700,700,33992,Nagoya-ShimizuShizuoka-Toyohashi-Yokkaichi-Ulsan-Busan
+51,BPTS,JPN,ISX,"17Sun ~ 05Mon
+16Thu ~ 23Thu",HAS,1,420,400,31243,Busan-Imabari-Iyomishima-Mizushima-Busan-Matsuyama-Fukuyama-Mizushima
+52,BPTS,JPN,PKX,"13Sun~23Sun
+12Thu~22Thu",HAS,1,1200,200,18180,Busan-BusanNewport-MiikeI-Yatsushiro-Busan-Miike-Sendai
+53,BPTS,JPN,SKX1,12Sat~02Sun,SKR,1,700,500,28503,Ulsan-Busan-Gwangyang-Shanghai-Ningbo-PortkelangEast-Penang-PasirGudangJohor-Hongkong
+54,BPTS,JPN,SKX2,06Tue~16Tue,"HAS1
+SKR1",2,700,550,26121,Busan-PNC-Tsuruga-Toyamashinko-Niigata-Kanazawa-Imabari-TOKUYAMAYAMAGUC-Mizushima-Matsuyama-Iwakuni-Iyomishima
+55,BPTS,JPN,MSX,"03Wed~09Wed
+13Sat~20Sat",SKR,1,700,350,38799,Busan-Masan-Shimonoseki-Moji-Hakata
+56,BPTS,JPN,KJK,09Tue ~ 01Wed,DJS,1,1500,850,42821,Busab-Yokohama-Tokyo-Nagoya-Shimizu-Moji-Hakata-Shimonoseki
+57,BPTS,JPN,KHX1,13Fri~04Sat,HAS,1,1100,950,59647,Busan-Tokyo-Yokohama-Nagoya-Toyohashi-Ulsan
+58,BPTS,JPN,SETO4,11Sat~00Sun,SKR,1,550,450,24943,Busan-BusanNewport-Shibushi-Nagasaki-Kumamoto-Sendai-Yatsushiro-Imari-Niigata
+59,BPTS,JPN,BJS,04Fri~23Fri,NSL,1,1000,1200,26902,Busan-NEWBusan-Hakata-Kanazawa-Kushiro-Muroran3/26-Tomakomai-Ishikari(Sapporo)-Akita
+60,BPTS,JP,JPS1,05Fri~23Fri,KMTC,1,1100,1150,24421,Busan-Hakata-Kanazawa-Tomakomai-Ishikari-Akita
+61,BPTS,CKJ,NCQ,17Sun~08Mon,"KMTC2, NSL1",1,1000,1000,46713,Busan-Niigatahigashi-Akita-Tomakomai-Hachinohe-Sendai-Hitachinaka-BusanNEWPORT-Busan-Ulsan-Kwangyang-Qingdao-Dalian
+62,BPTS,CKJ,NCJ,20Wed~22Thu,"KMTC2, NSL1",3,1100,950,42497,Busan-Shimizu-Onahama-Sendai-Kamaishi-Niigatahigashi-Sakaiminato-Busan-Ulsan-Kwangyang-Tianjinxingang-Qingdao
+63,BPTS,CKJ,QJ1,16Sun ~ 21Sun,CCL,1,230,150,5007,Busan-Qingtao-Weihai-Moji-Hakata
+64,BPTS,CKJ,"NCK
+(1&2)",19Sat ~ 08Sun,DYL,1,960,800,78066,Shanghai-Ningbo-Busan-Moji-Iyomishima-Mizushima-Moji-Hakata-Busan-Ulsan
+65,BPTS,CKJ,NCS,06Sat ~ 22Sat,CKL,1,960,800,39460,Busan-Ulsan-Gwangyang-Shanghai-Ningbo-Tianjinxingang-Dalian-Tomakomai-Sakata-Kushiro-Akita-MuroranHokkaido
+66,BPTS,CKJ,CJ1,06Sat ~ 22Sat,NSL1 PCL1,2,1100,750,31859,Busan-Ulsan-Niigata-Kanazawa-Toyama-Shanghai-Ningbo-Tianjinxingang-Toyamashinko-Niigatahigashi-Sakata
+67,BPTS,CKJ,NTP,"04Mon~04Tue
+05Tue~00Wed",NSL2 KMTC1,3,1000,950,77632,KRPUS(E)-JPKWS-JPHIC-JPSDJ-JPTMK-JPISI-JPSKT-JPSMN-KRPUS(W)-KRPUS(W)-KRUSN-KRKAN-CNSHA-CNNGB-KRPUS¢æ
+68,BPTS,CKJ,KCJ,09Fri ~ 21Fri,DJS,1,1000,1000,35046,Busan-Kwangyang-Shanghai-Ningbo-Hakata-Hibikinada
+69,BPTS,Intra-Asia,IHP2,12Tue~04Wed,HAS2,2,900,950,46651,Busan-Kwangyang-Incheon-Hongkong-Haiphong
+70,BPTS,Intra-Asia,HPS1,22Fri~18Sat,HAS1 SKR1,2,1000,1000,57252,Busan-Ulsan-Hongkong-Haiphong-Hongkong-Shekou-Busan
+71,BPTS,Intra-Asia,HPS2,07Fri~22Fri,HAS1 SKR1,2,1000,700,19025,Busan-Haiphong-Shekou-Incheon-Ulsan-Kwangyang
+72,BPTS,Intra-Asia,KVT,17Sat ~ 13Sun,NSL1/PCL 1/KMTC1,4,1800,1650,79496,Gwangyang-Busan-Hongkong-Hochimin-Laemchabang-Bangkok
+73,BPTS,Intra-Asia,NTX,15Wed ~ 06Thu,NSL1/DJS1/SKR1,3,1800,1100,50643,Busan-Hochimin-Laemchabang-Bangkok-Incheon-Pyeongtaek-Gwangyang
+74,BPTS,Intra-Asia,BIH,06Tue ~ 23Wed,NSL1/PCL1,2,1100,700,33110,Busan-Incheon-Hongkong-Haiphong-Hongkong-Busan
+75,BPTS,Intra-Asia,KHP,01Sun ~17 Sun,NSL1/KMTC1,2,1800,800,48482,Gwangyang-Busan-Ulsan-Hongkong-Haiphong-Shekou-Shantou
+76,BPTS,Intra-Asia,BTS,13Thu ~ 04Fri,HAS1/SKR2,3,1032,1400,55959,Incheon-Pyeongtaek-Busan-Hochimin-Bangkok-Laemchabang-Hochimin
+77,BPTS,Intra-Asia,KHS1,19Fri~32Sat,HAS1/KMTC1/SKR1,3,1700,1500,83578,Ulsan-Busan-Gwangyang-Hochimin-Laemchabang-Bangkok-Laemchabang-Hochimin-Busan
+78,BPTS,Intra-Asia,KST,23Fri ~ 12Sat,POL/CKL/HAS,3,1800,1450,61156,Incheon-Busan-Hochimin-Laemchabang-Bangkok-Hongkong-Haiphong-LatKrabang
+79,BPTS,Intra-Asia,PMX,00Wed~12Wed,KMTC,1,1700,1200,62609,Busan-Manilla-Incheon
+80,BPTS,Intra-Asia,PCI,01Wed ~ 21Wed,SKR,4,1800,1900,121135,Busan-Gwangyang-Shanghai-Jakarta-Surabaya-Hochimin-Shanghai-Busan
+81,BPTS,Intra-Asia,PCI2,13Sat~05Sun,"SKR2, HAS2",1,2000,2000,95466,Busan - Gwangyang(GWCT) - Shanghai- Jakarta- Semarang- Laem Chabang- Shanghai
+82,BPTS,Intra-Asia,NFS,03Tue~23Tue,"NSL,ONE,PIL,KMTC",4,2000,1600,69985,Busan?Kwangyang?Shanghai?Shekou?Singapore?PortKelang?Penang?Singapore?Catlai?Nansha?Busan
+83,BPTS,RUS,PVS2,"05Sat~05Sun
+19Wed~13Thu
+22Tue~22Wed",SKR,3,450,1000,103880,Busan-Vladivostok
+84,BPTS,RUS,KRX,13Thu~07Fri,DYL,1,700,600,37752,Busan-Vladivostok
+85,BPTS,RUS,SRS,18Sun~14Mon,SKR,2,1100,800,64179,Shanghai-Ningbo-Busan-Vladivostok-Kwangyang-Busan
+86,BPTS,RUS,KRV,13Tue~07Wed,DYL,1,630,650,27072,Busan-Vladivostok
+87,BPTS,USWC,TPS,09Thu  ~ 08Fri,SNC,1,2400,700,8733,Busan-Haiphong-Hochiminhcity-Seattle
+88,BPTS,USWC,PNW,09Fri ~ 02Sat,WSL,7,2000,900,60042,Busan-Osaka-Seattle-Vancouver
+89,BPTS,CHN,TCL,08Wed ~ 18Wed,Taechang Line3,3,800,200,2834,Busan-Gwangyang-Shanghai-Dafeng-Taicang-Nanjing-Dongfeng
+90,BPTS,JPN,THS2,"08Thu~21Thu
+08Sun~21Sun","SKR2
+HAS1",3,1500,1000,71295,Busan(BPTG)-Busan(BCT)-Shimizu-Kashima-Hidachinaka-Sendai-Hachinohe
+91,BPTS,JPN,THS3,,,,,,,Busan(BPTG)-Busan(BCT)-Tomakomai-Sendai
+92,BPTS,JPN,THS5,12Tue ~ 05Wed,"HAS1
+SKR1",2,1100,600,25549,Busan-Kushiro-Sendai-Onahama-Kashima
+93,BPTG,JPN,KJP,01Sun ~ 23Sun,PCL,1,1500,850,41618,Busan-Shimizu-Tokyo-Toyohashi-Yokkaichi-Nagoya-Ulsan
+94,BPTG,JPN,SETO3,04Sun~18Sun,SKR,1,700,450,23847,Busan-Kochi-Mizushima-Ulsan-TokuyamaYamaguchi-Tokushima
+95,BPTG,JPN,THS4,13Sat~01Sun,SKR,1,700,550,23096,Busan-BusanNewport-Naoetsu-Akita-Tomakomai-Niigata-TokuyamaYamaguchi
+96,BPTG,JPN,BSS2,01Mon~12Mon,SKR,1,600,450,13783,Busan-Hakata-Oita-Kochi-Hbikinada-Gwangyang-Moji-Shibushi-Shimizu-Iwakuni-Yokkaichi
+97,BPTG,JPN,CJS-E,07Sun~20Sun,POL,1,700,500,28070,Busan-Yokohama-Tokyo-Shimizu-Nagoya-Yokachi-Busan-Kochi-Gwangyang-Lianyungang-Qingtao-Masan
+98,BPTG,CHN,CKS1,19Wed~06Thu,SITC,1,900,700,47149,Rizhao-Lianyungang-Qingtao-Busan
+99,BPTG,CHN,KCN1,16Wed~02Thu,SNL,1,850,1000,43479,Busan-Kwangyang-Nanjing-Zhangjiagang-Yingkou
+100,BPTG,CHN,KCN2,09Sat~21Sat,SNL,1,850,1000,50876,Busan-Zhangjiangang-Nanjing-Nantong
+101,BPTG,CHN,KNX,01Fri~12Fri,"POL1
+KMTC1",2,1000,550,28774,Incheun-Gwangyang-Busan-Huangpu-Nansha-Shekou-Tianjinxingang-Nansha-Qingtao
+102,BPTG,CHN,KTH,09Tue~ 19Tue,"YML1
+TSL1",2,1800,1000,41267,Incheun-Busan-Gwangyang-Keelung-Taichung-Hongkong-Keelung-Taichung-Keelung-Incheun
+103,BPTG,CHN,NBQ,19Wed~06Thu,POL,1,1000,850,38789,Qingtao-Busan-Gwangyang
+104,BPTG,CHN,NBS,04Sat~14Sat,POL,1,700,750,30690,Busan-Gwangyang-Shanghai-Ningbo
+105,BPTG,CHN,NSC,17Sun~05Mon,"SKR1
+POL1",2,1100,600,32199,Busan-Gwangyang-Incheu-Hongkong-Huangpu-Shekou-Shantou-Nansha-Ningbo-Shanghai
+106,BPTG,CHN,QPX,19Sat ~ 08Sun,EAS,1,1700,1800,79342,Gwangyang - Lianyungang - Qingdao - Busan(BPTG/QPX) - Busan (DGT/KCE2)
+107,BPTG,CHN,RSL,09Thu  ~ 20Thu,Rongshang 1,1,2600,400,8946,Busan-Taicang
+108,BPTG,CHN,JWK,21Mon ~ 05Tue,HHS2,2,400,450,20621,Busan-Jingtang-Weifang
+109,BPTG,CHN,SPX1,22Tue~17Wed,EAS,1,1600,2000,66964,Gwangyang - Ningbo - Shanghai - Busan(BPTG/SPX1)
+110,BPTG,CHN,SPX2,09Sat~08Sun,EAS,1,1000,900,28548,Gwangyang - Ningbo - Shanghai - Busan(BPTG/SPX2)
+111,BPTG,CHN,TPX1,19Tue~12Wed,EAS,1,1700,1200,70104,Gwangyang - Yantai -Xingang - Busan(DGT/YNT) - Busan (BPTG/TPX1)
+112,BPTG,CHN,TPX2,19Fri~12Sat,EAS,1,1300,1000,47388,Gwangyang - Xingang - Dalian - Busan(BPTG/TPX2)
+113,BPTG,Intra-Asia,ACE,14Thu~06Fri,"RCL1/CMA1/
+COS1/TSL1/SMH/
+KMTC",6,"4,000~
+6,000",2200,87791,Busan-Qingtao-Shanghai-Sheikou-Singapore-PortkelangEast-Manilla-Chennai
+114,BPTG,Intra-Asia,CJV2,00Thu ~ 12Thu,SITC3,3,1000,250,12861,Haiphong-Shekou-Shanghai-Osaka-Kuka-Nagoya-Yokkaichi-Busan-Xiamen-Qingtao
+115,BPTG,Intra-Asia,CJV3,19Fri ~ 08Sat,SITC3,3,950,500,14325,Haiphong-Qinzhou-Shanghai-Tokyo-Kawasaki-Yokohama-SmizuShizuoka-Busan-Xiamen-Shekou
+116,BPTG,Intra-Asia,JHTN,17Sat - 02Sun,TSL2,2,1000,750,37500,Osaka-Kobe-Moji-Busan-Gwangyang-Keelung-Kaohsiung-HongKong-Shekou-Xiamen
+117,BPTG,Intra-Asia,PAS,01Thu ~ 12Thu,"TSL1
+YML1
+IAL1",3,2700,1450,55719,Busan-Gwangyang-Ningbo-Shanghai-Hongkong-Kaohsiung-Jakarta-SemarangJava-Surabaya-Kaohsiung-Hongkong-Sheikou-Xiamen-Osaka-Moji-Hakata-Kobe-Keelung-Taichung
+118,BPTG,Intra-Asia,FEM,12Tue~13Wed,"SKR2/HAS
+1/SITC1",4,1800,2000,106359,Ulsan-Busan-Gwangyang-Shanghai-Ningbo-PortkelangEast-Penang-PasirGudangJohor-Hongkong
+119,BPTG,Intra-Asia,VTX1,08Wed ~ 20Wed,SITC,4,1800,750,28523,Busan-Shanghai-Hongkong-Bangkok-Leamchabang-Hochiminh-Osaka-Kobe
+120,BPTG,CHN,KBX,23Fri~11Sat,HAS,1,700,950,47738,Busan-Kwangyang-Ulsan-Tianjinxingang-Qingtao-Dalian
+121,BPTG,CHN,KXS1,09Tue~03Wed,SKR,1,900,1400,72322,Busan-Ulsan-Gwangyang-Pyeongtaek-Tianjin-Xingang-Qingtao-Dalian
+122,BPTG,CHN,KQS,19Tue~11Wed,SKR,1,1100,1000,88400,Busan-Gwangyang-Qingtao-Shanghai
+123,BPTG,CHN,BSS1,10Sun~06Mon,SKR,1,1060,850,45313,Busan-Kwangyang-Dalian-Pyeongtaek-Tianjin-Xingang-Qingtao-Shanghai-Ningbo
+124,BPTG,Intra-Asia,JSV,01Thu~15Thu,WHL,3,1600,950,33982,Osaka-Busan-Keelung-Taipei-Taichung-Kaohsiung-Danang-Hochimin-Kaohsiung-Taichung-Taipei-Keelung-Hongkong-Hakata-Kobe-Mizushima-Kobe
+125,BPTG,Intra-Asia,KSS,15Mon~09Tue,WHL,4,2600,1100,38725,Busan-Keelung-Kaohsiung-Hongkong-Singapore-PortKelang-Penang-PasirGudang-Singapore-Hongkong-Kaohsiung-Taipei-Inchon-Gwangyang
+126,BPTG,Intra-Asia,KVS,15Fri~01Sat,WHL,4,1200,1000,37745,Ulsan-Busan-Keelung-Taichung-Hongkong-Hochimin-Singapore-PortKelang-Kaohsiung-Taichung-Keelung-Inchon-Gwangyang
+127,BPTG,RUS,BVS,08Mon~17Mon,KRC,2,1100,550,19436,Busan-Vladivostok
+128,BPTG,CHN,KQP,09Fri~08Sat,SKR,1,1000,1000,55550,Busan-Gwangyang-Qingtao-Yantian
+129,BPTG,USEC,AMX,22Sun~12Mon,"SKR,TSL,KMD,ESL,
+SLS,RCL,SNL",7,2800,1500,75000,Shanghai-Qingdao-Busan_Manzanillo
+130,PNIT,USWC,ORIENT E,"Sun
+Wed~Thu",MSC,7,13000,4800,250000,Qingdao-Ningbo(inclZhoushan)-Shanghai-Busan-LongBeach-Oakland-Portland(US-Oregon)-Busan-Qingdao
+131,PNIT,SA,"ASPA2E/W
+(ALX2E/W)","Wed~Thu
+Mon~Tue",MSC/ONE,14,16000,10000,500000,Shanghai- Xiamen- Chiwan (Shenzhen)- Hong Kong- Ningbo (incl Zhoushan)- Busan New Port- Manzanillo (Mex)- Lazaro Cardenas- Balboa- Buenaventura- Callao- San Antonio- Lirquen- Coronel- Callao- Manzanillo (Mex)- Lazaro Cardenas- Yokohama (Honmoku)- Busan New Port- Shanghai
+132,PNIT,I/A,GOLDENHORN,Thu~Fri,MSC,3,1700,800,40000,Shanghai- Ningbo (incl Zhoushan)- Rizhao- Vladivostok- Busan- Shangh
+133,PNIT,I/A,KAGUYA,Fri~Sat,MSC,1,2800,1000,50000,Kobe- Osaka- Hakata- Busan New Port- Kobe
+134,PNIT,NA,CHINOOK E/W,"Mon
+Tue~Wed",MSC,5,13000,2000,200000,Cai Mep- Haiphong- Yantian (Shenzhen)- Ningbo (incl Zhoushan)- Shanghai- Qingdao- Busan New Port- Seattle- Prince Rupert- Vancouver (Can)- Busan New Port- Cai Mep
+135,PNIT,I/A,PERTIWI,Wed~Thu,MSC,7,4000,2000,120000,Busan ? Qingdao ? Incheon ? Dalian ? Tianjin Xingang ? Vung Tau ? Laem Chabang ? Singapore ? Tanjung Pelepas ? Jakarta ? Panjang ? Singapore ? Tanjung Pelepas ? Busan
+136,PNIT,NA,SANTANA,Sun~Mon,MSC,13,8000,3000,150000,Yantian (Shenzhen)- Ningbo (incl Zhoushan)- Shanghai- Qingdao- Busan New Port- Cristobal- Caucedo- Salvador (aka Bahia)- Suape- Santos- Mundra- Singapore- Yantian (Shenzhen)
+137,PNIT,ME/A,FALCON,Fri~Sat,MSC,9,14000,4000,80000,Tianjin- Busan New Port- Qingdao- Shanghai- Ningbo (incl Zhoushan)- Xiamen- Nansha- Chiwan (Shenzhen)- Singapore- Jebel Ali (Dubai)- Khalifa Seaport- Hamad Port (Doha New Port)- Umm Qasr- Khalifa Seaport- Tianjin
+138,PNIT,AUS,PANDA,Tue~Wed,ZIM/MSC,7,6000,3000,110000,Busan New Port- Qingdao- Shanghai- Ningbo (incl Zhoushan)- Nansha- Hong Kong- Yantian (Shenzhen)- Brisbane- Melbourne- Sydney (Botany Bay)- Brisbane- Busan New Port
+139,PNIT,I/A,DOLPHIN,Sun~Mon,MSC,7,3000,2000,130000,Qingdao- Dalian- Tianjin- Kaohsiung- Chiwan (Shenzhen)- Port Kelang- Singapore- Semarang- Tanjung Perak (Surabaya)- Singapore- Haiphong- Busan New Port- Qingdao
+140,PNIT,EU,DRAGON,Thu~Fri,MSC,16,16000,4000,100000,Shanghai - Ningbo (incl Zhoushan) - Nansha - Yantian (Shenzhen) - Singapore - Ashdod - Marsaxlokk - Gioia Tauro - Genoa - La Spezia - Fos - Valencia - Malaga - Abidjan - Lome - Mundra - Nhava Sheva - Vizhinjam - Busan New Port - Shanghai
+141,PNIT,SA,CARIOCA,Fri,MSC,15,10000,3000,60000,Qingdao- Busan New Port- Ningbo (incl Zhoushan)- Shanghai- Shekou (Shenzhen)- Singapore- Colombo- Rio de Janeiro- Santos- Paranagua- Itajai- Buenos Aires- Rio Grande- Imbituba- Itajai- Navegantes- Santos- Sepetiba (Itaguai)- Walvis Bay- Vizhinjam- Singapore- Qingdao
+142,PNIT,RUS,SUNRISE,Tue~Wed,MSC,1,1500,1000,10000,Busan- Vostochny- Busan
+143,PNIT,SAWC,"AN3E
+(ALX3E)",Sat~Mon,"HLC/ONE/MSC/
+HMM",12,8800,2870,300000,Ningbo-Shanghai-Qingdao-Busan-Yokohama-Ensenada-Manzanillo-P.quetzal-Buenaventura-Callao-Guayquil
+144,PNIT,SAWC,"AN3W
+(ALX3W)",Wed~Thu,"HLC/ONE/MSC/
+HMM",12,8800,1800,140000,Guayaquil-Buenaventura-Rodman-Lazaro Cardenas-Ensenada-Yokohama-Busan-Ningbo
+145,PNIT,SAWC,AN1(ALX1),Sat~Mon,HLC/ONE/HMM,12,13000,3083,390000,"Yantian-Hong Kong-Keelung-Shanghai-Ningbo--Busan-Manzanillo-
+Lazaro Cardenas-Callao-Iquique-Antofagasta-Valparaiso-Coronel-Valparaiso-Yantian"
+146,PNIT,JPN,MSX,Sun,SKR,1,360,50,2500,Kamman-Busan-Masan-Shimonoseki-Hibiki-Tokuyama-Kamman-Busan-Masan-Shimonoseki-Moji-Hosojima-Kamman
+147,PNIT,JPN,SETO3,Sun~Mon,SKR,1,700,100,5000,Busan-Iyomishima-Mizushima-Tokuyama-Busan-Iyomishima-Mizushima-Matsuyama-Busan
+148,PNIT,JPN,SETO4,Sun,SKR,2,550,100,5000,Busan-Moji-Hakata-Busan-Iyomishima-Imabari-Matsuyama-Busan-Shibushi-Nagasaki-Kumamoto-Sendai-Yatsshiro-Busan
+149,PNC,MIDDLE EAST,FM1,Fri - Sat,MSK 5/HPL 3,8,8500,1900,66000,TIANJIN-BUSAN-NINGBO-SHANGHAI-TANJUNGPALEPAS-JEBELALI-SINGAPORE
+150,PNC,USEC,USEC2E,Wed - Fri,HPL 12,12,10000,6100,209250,NINGBO-SHANGHAI-BUSAN-PANAMA-CARTAGENA-NEWYARK-NORFOLK-CARTAGENA(COLOMBIA)-PANAMA-LOSANGELES
+151,PNC,USEC,USEC3,Mon - Wed,MSK 12,12,8500,7100,355000,SHANGHAI-NINGBO-YANTIAN-BUSAN-LAZAROCARDENAS-PANAMA-HOUSTON-MOBILE-CARTAGENA(COLOMBIA)-PANAMA-BALBOA
+152,PNC,USWC,USWC3E,Sat - Sun,MSK 8,8,10000,2700,135000,YANTIAN-SHANGHAI-BUSAN-YOKOHAMA-PRINCERUPURT-VANCOUVER
+153,PNC,USWC,USWC2E,Wed - Thu,MSK 8,8,8500,4700,235000,QINGDAO-SHANGHAI-BUSAN-LA-OAKLAND
+154,PNC,USWC,USWC4E,Sun - Mon,MSK 2/HPL 5,7,8500,4800,240000,NINGBO-SHANGHAI-BUSAN-TACOMA-VANCOUVER
+155,PNC,USWC,USWC5E,Wed - Thu,MSK 1/HPL 5,6,6500,5600,280000,NINGBO-SHANGHAI-BUSAN-TACOMA-VANCOUVER-YOKOHAMA
+156,PNC,Intra-Asia,A04,Mon - Wed,MSK 2,2,4500,7200,360000,DALIAN-XINGANG-BUSAN-SHANGHAI
+157,PNC,Intra-Asia,A05,Sun - Mon,MSK 3,3,6500,6700,335000,KWANGYANG-BUSAN-TANJUNGPELEPAS-SINGAPORE
+158,PNC,Intra-Asia,A14,Tue - Wed,MSK 4,4,4500,3200,160000,XINGANG-TNAJUNGPELEPAS-SINGAPORE-XIAMEN-BUSAN
+159,PNC,MEDITERRANEAN,TIGER,Sat- Sun,MSC 15,15,19000,4000,200000,XINGANG-DALIAN-BUSAN-NINGBO-SHANGHAI-SHEKOU-SUINGAOPORE-EQAKI-YARIMCA-ISTANBUL-ASHDOD-SINGAPORE-XIAMAN
+160,PNC,MEDITERRANEAN,JADE,Sun - Mon,MSC 15,15,24000,6700,335000,QINDAO-BUSAN-NINGBO-SHANGHAI-YANTIAN-SINGAPORE-VIZHINJAM-SINES-VALENCIA-BARCELONA-GIOIATAURO-SINGAPORE-SHANGHAI
+161,PNC,USEC,EMPIRE E,Sat - Sun,MSC 9,9,9000,3200,160000,QINGDAO-SHANGHAI-NINGBO-BUSAN-PANANMACITY-NEWYORK-NORFOLK-BALTIMORE
+162,PNC,USEC,EMPIRE W,Wed - Thu,MSC 9,9,9000,3200,160000,PANAMA-BUSAN-QINDAO-SHANGAI-NINGBO
+163,PNC,Intra-Asia,KAGUYA,Thu- Fri,MSC 1,1,3000,2900,140000,KOBE-OSAKA-HAKATA-BUSAN-KOBE
+164,PNC,Intra-Asia,ORIGAMI A,Sat- Sat,MSC 7,7,3000,1600,53983,TOKYO-YOKOHAMA-YOKKAICHI-NAGOYA-BUSAN
+165,PNC,Intra-Asia,ORIGAMI R,Sun- Sun,MSC 7,7,4000,1500,102331,VUNGTAU-TANJONGPELEPAS-SINGAPORE-SUBIC-MANILA-KHOHSIUNG-BUSAN
+166,PNC,MEDITERRANEAN,PHOENIX,Sat- Sun,MSC,,8000,1900,95000,BUSAN-NINGBO-SHANGHAI-SHEKOU-SINGAPORE-ISKENDERUN-PIRAEUS-TRIESTE-KOPER-ISKENDERUN-MERSIN-SINGAPORE
+167,PNC,SA,AC1,Sat - Sun,MSK 7,7,4000,2900,100000,NINGBO-QINGDAO-BUSAN-LAZAROCARDENAS-GUAYAQUILPOSORJA
+168,PNC,SA,AC2S,Tue- Wed,MSK 11,11,15000,5200,259704,HONGKONG-YANTIAN-NINGBO-SHANGHAI-QINGDAO-BUSAN-YOKOHAMA-MANZANILLO-LAZAROCARDENAS-GUAYAQUIL-BALBOA-MANZANILLO
+169,PNC,SA,AC3E,Sun- Mon,MSK 11,11,10000,4000,200794,SHANGHAI-NINGBO-KWANGYANG-BUSAN-BALBOA-BUENAVENTURA-CALLAO-MEJILLONES-SANANTONIO
+170,PNC,Intra-Asia,FI3W,Thu- Fri,MSK 3/XPR 4,7,5000,2500,129308,QINGDAOXINGANGBUSAN-TANJUNGPELEPAS-PORTKELANG-NHAVASHEVAPIPAVAV-KARACHIMUNDRA-SINGAPORE
+171,PNC,Intra-Asia,HP2,Sat- Sun,MSK 3,3,17000,1900,90000,HIBIKISHINKO-BUSAN-SHANGHAI-NINGBO-KAOSHIUNG-HONGKONG-HAIPONG-DANANG-YANTIAN-HONGKONG
+172,PNC,Intra-Asia,IA5N,Wed - Wed,MSK 7,7,17000,500,62909,SHANGHAI-BUSAN-MOJI-DALIAN-QINGDAO-YOKOHAMA-NAGOYA-KOBE-SHANGHAI-NINGBO-SHEKOU
+173,PNC,Intra-Asia,IA88S,Thu- Fri,MSK 5/HPL 3,8,17000,900,47484,HIBIKISHINKO-BUSAN-KWANGYANG-SHANGHAI-NINGBO-HOCHIMINCH-LAEMCHABANG-BANGKOK-LAEMCHABANG-HAIPHONG-HONGKONG-NANSHA-YOKOHAMA-NAGOYA-OSAKA-KOBE-MOJI
+174,PNC,AUS,ANZL,Mon -Tue,MSK 3/ONE 2/COS 2,7,4500,1900,77173,TOKYO-KOBE-BUSAN-SHANGHAI-YANTIAN-HONGKONG-BRISBANE-AUCKLAND-LYTTELTON-NAPIER-TAURANGA
+175,PNC,MEDITERRANEAN,ZMPW,Mon - Mon,ZIM 9,9,4000,1200,108276,BUSAN-QINGDAO-NINGBO-SHANGHAI-DACHANBAY-PORTKELANG-SUEZ-HAIFA-ISTANBULAMBARLI-YARIMCA-SUEZ-PORTKELANG-DACHANBAY-XIAMIN
+176,PNC,MIDDLE EAST,GLX,Tue - Wed,ESL 4/ONE 1/KMD 1/GFS 1,8,7000,1900,145145,BUSAN-QINGDAO-XIAMEN-NANSHA-DACHANBAY-PORTKLANG(W)-JEBELALI-DAMMAM-KHORFAKAN
+177,PNC,JPN,KF02,"Wed -Wed
+Sat - Sat",KFC 1,1,500,600,60979,BUSAN-MOJI-OITA-TOKUYAMA-HIROSHIMA-BUSAN(PNC)-MOJI-TOKUYAMA-HIROSHIMA
+178,HJNC,USWC,PNSW,THU~FRI,SML5,5,4.5K,800,30000,Vancouver-Seattle-Busan(HJNC)-Yantian
+179,HJNC,USWC,PNSE,MON~TUE,SML5,5,4.5K,1600,60000,Yantian-Ningbo-Shanghai-Busan(HJNC)-Vancouver-Seattle
+180,HJNC,USWC,CPXW,WED~WED,SML6,6,6.5K,600,50000,Qingdao-shanghai-Ningbo-Busan(HJNC)-longbeach-portland
+181,HJNC,USWC,CPXE,SAT~SAT,SML6,6,6.5K,1100,90000,Longbeach-Portland-Busan(HJNC)-Kwangyang-Qingdao
+182,HJNC,USWC,PN3E,SUN~TUE,HMM1/YML5,6,6K,4000,200000,Hongkong-Haiphong-Shanghai-Busan(HJNC)-Vancouver-Tacoma-Busan(HPNT)-Kaohsiung-hongkong
+183,HJNC,EUR,FE3,FRI~SAT,HMM12/ONE2/TBN1,15,24K,7168,358400,CNTAO-KRPUS-CNSHA-CNXMN-SGSIN-ESALG-NLRTM-DEHAM-GBSOU-SGSIN-CNYTN-CNTAO
+184,HJNC,MED,MS2W,WED~THU,"ONE10/YML6
+HMM5/TBN1",22,13K/15K,4992,249600,"(USWCstring)SGSIN-THLCH-VNVUT-CNSHA-KRPUS-USLGB-USOAK-KRPUS-CNSHA-CNNGB-TWKAO-CNSHK-SGSIN
+(MEDstring)KRPUS-CNSHA-CNNGB-TWKAO-CNSHK-SGSIN-MATNG-ESVLC-ESBCN-ITGOA-FRFOS-SGSIN-THLCH-VNVUT-CNSHA-KRPUS"
+185,HJNC,USWC,PS6W,FRI~SAT,HMM8,8,13K,4480,224000,CNSHA-CNNGB-KRKAN-KRPUS-USLGB-USOAK-KRPUS-KRKAN-KRINC-CNSHA
+186,HJNC,USEC,EC4E,THU~THU,ONE7/YML2/EMC2,11,6K/8K,3200,160000,TWKAO-HKHKG-CNYTN-CNNGB-CNSHA_KRPUS-Panama-USHOU_USMOB-Panama-PAROD-TWKAO
+187,HJNC,USEC,EC2W,FRI~SAT,ONE11/HMM1,12,13K,4800,199900,CNXMN-CNYTN-CNNGB-CNSHA-KRPUS-Panama-PAMIT-USSAV-USCST-USJAX-PAMIT-Panama-KRPUS-CNXMN
+188,HJNC,USWC,AHX,TUE~TUE,ONE3,3,1K,848,35600,KRPUS-JPYOK-USHNL
+189,HJNC,JPN,BTX,WED~THU,XPR1,1,1K,1120,61900,KRPUS-JPTMK
+190,HJNC,IA,JVH,MON~MON,ONE3,3,2K,720,56600,JPTYO-JPYOK-JPSMZ-JPNGO-JPUKB-KRPUS-KRKAN-TWKEL-TWKAO-VNHPH-TWKAO-TWKEL-JPTYO
+191,HJNC,CHN,BH3,SUN~MON,XPS1,1,2.5K,2240,164200,KRPUS-CNDLC
+192,HJNC,JPN,BNX,WED~THU,XPR1,1,0.7K,635.2,34000,KRPUS-JPKNZ-JPTOY-JPKIJ
+193,HJNC,JPN,JK2,TUE~TUE,ONE1,1,1K,1488,69300,KRPUS-JPUKB-JPOSA-JPNGO
+194,HJNC,IA,AIS,FRI~SAT,KMTC3/ESL2/TSL1/COS1,7,6K,1000,73100,CNTAO-KRKAN-KRPUS-CNNGB-CNSHK-SGSIN-MYPKG-INNSA-INMUN-PKKHI-MYPKG-HGHKG
+195,HJNC,IA,SIS2,THU~FRI,GFS2/SKR2/TSL1,5,3K,500,57000,KRPUS-KRKAN-CNSHA-CNNGB-CNSHK-MYPKG-INNSA-INMUN-PKKHI-MYPKG
+196,HJNC,JPN,MSX,WED~WED,SKR1,1,0.5K,100,8000,KRPUS(BPT)-KRPUS(HJNC)-KRMSA-JPSHS-JPMOJ-JPHBK-JPHKT-KRPUS(BPT)-KRPUS(PNIT)
+197,HJNC,ME,"AR1
+(Suspended)",WED~WED,YML4/ONE3/WHL1,8,5K,-,,KRPUS-CNSHA-CNNGB-CNSHK-SGSIN-MYPKG-SAJED-JOAQJ-EGSOK-SAJED-SGSIN-KRPUS
+198,HJNC,CHN,AK3,Mon ~ Tue,COH,1,4.2K,800,54000,"Busan(HJNC, BNCT) - Busan(HKT) - Tianjin"
+199,HJNC,USEC,EC6E,MON~TUE,ONE10,10,6K,1600,135000,Kaohsiung-HongKong-Yantian-Ningbo-Shanghai-Busan(HJNC)-Houston-Mobile-New Orleans-Kaohsiung
+200,HJNC,USWC,PSXW,Fri,HMM8,8,9K,3520,140000,"SLA/LB - Oakland - Busan - Kwangyang(KIT) - Incheon - Shanghai 
+(Reoganized from May'23)  "
+201,HJNC,MEDITERRANEAN,MD1,SUN~MON,"ONE6/YML3
+/HLC1",10,11K,4800,260000,QINGDAO - PUSAN - SHANGHAI - NINGBO - SHEKOU - SINGAPORE - DAMIETTA - BARCELONA - VALENCIA - GENOA - ALGECIRAS - SINGAPORE - HONGKONG - QINGDAO
+202,HJNC,MEDITERRANEAN,MD2,WED~THU,HLC7/ONE5,12,13K,7680,240000,PUSAN - SHANGHAI - NINGBO - KAOHSIUNG - SHEKOU - SINGAPORE - PIRAEUS - GENOA - LA SPEZIA - FOS SUR MER - BARCELONA - SINGAPORE - HONGKONG - PUSAN
+203,HPNT,USWC,PS3W,THU~FRI,ONE8/YML4,12,8K,3000,154000, INNSA-INPAV-LKCMB-MYPKG-SGSIN-VNQOE-VNHPH-CNYTN-USLAX-USOAK-KRPUS-CNSHA -CNNGB-CNSHK-SGSIN-MYPKG-INNSA
+204,HPNT,USWC,PN3W,SUN~MON,HMM3/YML4,7,6K,2000,106000, CNTAO-KRPUS-CAVAN-USTIW-KRPUS-CNTAO
+205,HPNT,USWC,PS6E,SAT~SUN,HMM8,8,13K,4100,212000, CNSHA-CNNGB-KRKAN-KRPUS-USLGB-USOAK-KRPUS-KRKAN-KRINC-CNSHA
+206,HPNT,USWC,MS2E,MON~MON,"ONE10/YML6
+HMM5/TBN1",22,13K/15K,2700,141000,"(USWC string) SGSIN-THLCH-VNVUT-CNSHA-KRPUS-USLGB-USOAK-KRPUS-CNSHA-CNNGB-TWKAO-CNSHK-SGSIN
+(MED string) KRPUS-CNSHA-CNNGB-TWKAO-CNSHK-SGSIN-MATNG-ESVLC-ESBCN-ITGOA-FRFOS-SGSIN-THLCH-VNVUT-CNSHA-KRPUS"
+207,HPNT,USEC,EC1E,TUE~WED,ONE10/YML1,12,8K/13K,3800,198000, TWKAO-CNYTN-CNSHA-CNNGB-KRPUS-Panama-USNYC-USORF-USSAV-Panama-PAROD-TWKAO
+208,HPNT,USEC,EC2E,THU~FRI,ONE11/HMM1,12,12K,4100,212000, CNXMN-CNYTN-CNNGB-CNSHA-KRPUS-Panama-PAMIT-USSAV-USCST-USJAX-PAMIT-Panama -KRPUS-CNXMN
+209,HPNT,SA,FIL,MON~TUE,HMM11,11,4.5K/6K,2200,113000, KRPUS-CNSHA-CNNGB-CNSHK-SGSIN-INKAT-BRRIG-BRSSZ-BRPNG-BRNVT-SGSIN-HKHKG-KRPUS
+210,HPNT,SA,FLX,MON~TUE,HMM4/ONE3,7,5K,1400,75000, CNSHA-KRPUS-MXLZX-CNSHA
+211,HPNT,MEDITERRANEAN,FIM,SUN~MON,HMM13,13,"7K/8.5K
+10K/11K",5500,285000, KRPUS-CNSHA-CNNGB-CNSHK-SGSIN-INNSA-PKKHI-INMUN-ESALG-ESVLC-ESBCN-ITGOA-GRPIR-ESALG-PKKHI-INMUN-INNSA-INKAT-SGSIN-CNDCB-KRPUS
+212,HPNT,MIDDLE EAST,AG1,SAT~MON,HMM9,9,15K,4800,248000, CNTXG-CNTAO-KRPUS-CNSHA-CNNGB-TWKAO-CNSHK-SGSIN-AEDXB-SADMN-IQUQR-SAJUB- QAHMD-AEAUH-AEDXB-OMSOH-MYPKG-SGSIN-HKHKG-CNTXG
+213,HPNT,AUS,NEAX,WED~THU,"HMM2/EMC2
+HLC1/ONE1",6,5.5K,3000,156000, KRPUS-CNTAO-CNSHA-CNNGB-CNYTN-AUSYD-AUMEL-AUBNE-KRPUS
+214,HPNT,Intra-Asia,CTP,THU~FRI,ONE3/RCL1,4,2.6K,2200,116000, CNTAO-KRPUS-CNSHA-THLCH-VNVUT-PHMNL-PHSFS-CNTAO
+215,HPNT,Intra-Asia,ICN,"WED~WED
+TEU~WED",HMM7,7,2K,2300,121000," String 1 (Vietnam) : KRPUS-CNSHA-CNNGB-VNSGN-THLCH -KRINC
+ String 2 (Indonesia) : KRINC-KRPUS-CNSHA-IDJKT-IDSUB-KRPUS"
+216,HPNT,CHN,BH2,THU~FRI,XPR1,1,2.5K,3700,190000, KRPUS-CNTXG-KRPUS
+217,HPNT,JPN,JPHN,WED~THU,ONE3,3,2.8K,1400,71000, JPNGO-JPYKK-JPSMZ-JPTYO-JPYOK-JPOSA-JPUKB-KRPUS-PHMNL-KRPUS-JPNGO
+218,HPNT,JPN,JPHS,SAT~SUN,ONE3,3,2.8K,1700,87000, JPNGO-JPYKK-JPSMZ-JPTYO-JPYOK-JPOSA-JPUKB-KRPUS-PHMNL-KRPUS-JPNGO
+219,HPNT,RUS,KRS,WED~WED,FES1,1,1.7K,1000,52000, KRPUS-RUVVO-KRPUS
+220,HPNT,RUS,JRX,TUE~TUE,FES1,1,1K,100,6000, JPSDI-JPTYO-JPSMZ-JPNGO-JPKOB-KRPUS-JPTOY-RUVVO-JPTOY
+221,HPNT,USWC,"PSXE
+(PS8E)",Sat ~ Mon,HMM,7,13K,3600,180000,Incheon - Shanghai - Gwangyang - Busan - Los Angeles - Oakland - Busan - Gwangyang - Incheon
+222,HPNT,USWC,PS7E,Fri ~ Fri,PA,9,14K,2400,120000,Singapore-LaemChabang-Caimep-Hongkong-(Busan)-LA/LB-Oakland-Hongkong
+223,BNCT,MED,MEX1,Fri - Sat,CMA15,15,15300,5300,180000,Qingdao-Busan-Shanghai-Ningbo-Xiamen-Nansha-Shekou-Singapore-Valencia-Barcelona-Fos-Malta-PortKelang-Qingdao
+224,BNCT,MED,PHOEX,Fri - Sat,CMA11,11,9000,4700,235000,Shanghai-Ningbo-Busan-Shekou-Singapore-Alexandria-Beirut-Koper-Trieste-Rijeka-Alexandria-Jeddah-PortKelang-Shekou-Shanghai
+225,BNCT,USEC,AWE2,Sat - Sun,COS11,11,13100,2900,123300,Tianjin-Qingdao-Ningbo-Shanghai-Busan-NewYork-Norfolk-Savannah-Tianjin
+226,BNCT,USEC,PEX3,Fri - Sat,CMA13,13,9400,2900,145000,Singapore-VungTau-Shekou-Ningbo-Shanghai-Busan-Houston-Mobile-NewOrleans-Singapore
+227,BNCT,USEC,CBX,Tue - Wed,CMA13,13,9500,3100,134300,PortKelang-Haiphong-Yantian-Ningbo-Shanghai-Busan-Yokohama-Norfolk-Savannah-Charleston-Miami-PortKelang
+228,BNCT,USWC, CPNW,Mon - Tue,CMA8/COS4,8,10000,3100,155000,Yantian-Xiamen-Ningbo-Shanghai-Busan-Vancouver-Seattle-Gwangyang-Yantian
+229,BNCT,USWC,EX1W,Sun - Mon,CMA7,7,5500,2300,117900,LosAngeles-Oakland-Yokohama-Naha-Busan-Qingdao
+230,BNCT,USWC,EX1E,Mon - Tue,,,,1900,94800,Qingdao-Shanghai-Busan-LosAngeles
+231,BNCT,USWC,PCC1E,Wed - Thu,OOL6,6,13400,2800,117900,Ningbo-Shanghai-Busan-LongBeach
+232,BNCT,USWC,PCC1W,Tue - Wed,,,,2300,41800,LongBeach-Busan-Ningbo
+233,BNCT,USWC,CPS,Mon - Tue,EMC7,7,8500,1300,42400,Qingdao-Shanghai-Ningbo-LosAngeles-Oakland-Busan-Qingdao
+234,BNCT,US,EXX,Tue - Wed,CMA7,7,5100,900,19100,Busan-Gwangyang-Ningbo-Shanghai-LosAngeles-Oakland-DutchHarbor-Busan
+235,BNCT,SA,PEX2,Fri - Sun,CMA9/COS4,13,10100,3900,164500,Busan-Manzanillo-Balboa-PanamaCanal-PuntaManzanillo-Cartagena-Kingston-Caucedo-Singapore-Shekou-HongKong-Kaohsiung-Ningbo-Shanghai-Qingdao-Busan
+236,BNCT,SA,ACSA1E,Thu - Fri,CMA10,10,7000,3100,217500,Ningbo-Shanghai-Busan-SanAntonio-Chancay-Callao-Posorha-Yokohama
+237,BNCT,SA,M2XE,Wed - Thu,CMA10,10,16000,3100,124100,Shekou-Ningbo-Shanghai-Tianjin-Qingdao-Busan-Manzanillo
+238,BNCT,SA,M2XW,Sun - Mon,,,,3900,95100,Manzanillo-LazaroCardenas-Buenaventura-Busan-Shekou
+239,BNCT,Pacific,GSX,Sat - Sun,APL2,2,1700,900,51200,Busan-Hakata-Yokohama-Guam-Saipan
+240,BNCT,IA,JTVS,Wed,CNC4,4,1600,900,48300,Busan-Gwangyang-Kaohsiung-ChuLai-LaemChabang-Hochiminhcity-Tokyo-Yokohama-Nagoya-Kobe
+241,BNCT,IA,KCM2 (SB),Thu - Fri,CNC6,6,4400,1200,84100,Xingang-Busan-Qingdao-Shanghai-Shantou-Shekou-PortKlang-Penang
+242,BNCT,IA,BMX,Sat - Sun,APC5,5,4000,,,Dalian-Xingang-Qingdao-Shantou-Shekou-Hong Kong-Nansha-Manila-Davao-Busan-Shanghai
+243,BNCT,CHN,AK3,Tue - Wed,COH,1,2500,1600,57800,Busan-Xingang-Dalian(Adhoc)-Busan
+244,BNCT,JPN,NPF,Sun,CNC,1,800,500,33700,Busan-Shibushi-Oita-Moji-Hakata-Gwangyang-Busan
+245,BCT,Europe,LION,Sat~Mon,MSC,19,24000,5775,163200,Qingdao-Busan-Ningbo-Shanghai-Nansha-Yantian-Singapore-Antwerp-Hamburg-Rotterdam-Antwerp-LeHavre-LondonGateway-AbuDhabi-JebelAli-Yantian
+246,BCT,TP,"ZCP
+(Amberjack,
+ZCPW)",Fri~Sun,ZIM,12,15000,3135,276000,Qingdao-Ningbo-Shanghai-Pusan-PanamaCanal.-Kingston-Charleston-Savannah-Norfolk-Kingston-PanamaCanal.-Qingdao
+247,BCT,EUR-USWC,"SWASTE
+(SWAN-SENTOSA)",Fri~Sat,MSC,21,15000,3300,180000,Ningbo-Shanghai-Xiamen-Yantian-Singapore-LeHavre-Rotterdam-Gothenburg-Aarhus-Hamburg-Antwerp-PortKlang-Singapore-LaemChabang-VungTau-Busan-LongBeach-Oakland-Yokohama
+248,BCT,USEC,"LONEST
+(Lone Star)",Tue~Tue,MSC,10,7000,2970,174000,Ningbo-Shanghai-Busan-Panama-Mobile-Houston-NewOrleans-Miami-Freeport-Panama-Rodman-Busan
+249,BCT,Africa,AFRICA,Sat~Sun,MSC,11,"13,000 - 24,000",2970,288000,TIANJIN-BUSAN-KWANGYANG-NINGBO-SHANGHAI-NANSHA-SHEKOU-SINGAPORE-TEMA-LOME-ABIDJAN-POINTENOIRE-COEGA-COLOMBO-SINGAPORE-QINGDAO
+250,BCT,SA,MEXICA,Tue~Wed,MSC,14,7000,1650,128000,Qingdao-Ningbo-Shanghai-Busan-Manzanillo-Lazarocardenas
+251,BCT,IA,CIX3,Fri~Sat,OOCL3/NGS1/ZIM2,6,4500,2693,59466,Xingang-Busan-Shanghai-Xiamen-HongKong-Shekou-Singapore-Colombo-NhavaSheva-Pipavav-PortKlang-Singapore-HongKong-Xingang
+252,BCT,SA,WSA3,Fri~Fri,COS11,11,8500,2206,71904,Xiamen-Shanghai-Qingdao-Busan-Ensenada-Yokohama-Ensenada-Manzanillo-SanAntonio-Lirquen-Callao-Manzanillo-Ensenada-Shanghai-Xiamen
+253,BCT,IA,KCM,Wed~Thu,KMD2/TSL1/SIT1,4,2800,970,62092,Busan(BCT)-Incheon-Qingdao-Shanghai-HongKong-PortKlang(West)-PortKlang(North)-PasirGudang-HongKong-Shekou-Busan(BCT)
+254,BCT,SA,WCSA,TUE~WED,PIL3/WHL3/YML2,8,4000,716,47091,Ningbo?Shanghai?Qingdao?Pusan?Manzanillo?LazaroCardenas?PuertoQuetzal?Buenaventura?Valparaiso?Ningbo
+255,BCT,IA,KI1,Sun~Mon,KMD4/SKR1,5,4500,1079,50003,Gwangyang-Ulsan-Busan(HBCT)-Busan(BCT)-HongKong-Singapore-Jakarta-Surabaya-HongKong
+256,BCT,JPN,BJS,FRI~FRI,KMD1/NSL1,2,1000,150,38833,Busan(BCT)-Busan-Hakata-Kanazawa-Hokkaido-Muroran-Tomakomai-Akita-Busan(BCT)
+257,BCT,JPN,SKX1,Sun~Sun,SKR1,1,700,180,24023,KRPUS-KRPUS(BCT)-JPIYM-JPTAK-JPHIJ-JPIWK-JPHSM
+258,BCT,IA,NCQ,Fri~Sat,KMD3/NSL1,3,1000,150,9071,"Qingdao-Dalian-Pusan(HKT)-Hakata-Hitachinaka-SendaiMiyagi-Hachinohe-Akita-Pusan(new)-Pusan-Ulsan-Kwangyang-Qingdao
+Akita-Pusan(NEW)-Pusan(BPT)-Ulsan-Gwangyang-Qingdao"
+259,BCT,JPN,JSW1,Sun~Sun,HAS1,1,700,146,4617,Busan(BPTS)-Busan(BCT)-Tsuruga-Kanazawa-Maizuru-Sakaiminato
+260,BCT,JPN,JSW2,Sat~Sat,SKR1,1,700,156,10529,Busan(BPTS)-Busan(BCT)-Niigata-Toyama-Kanazawa-Hamada-Busan(BCT-BPTS)-Okgye-Busan(BPTS)
+261,BCT,JPN,THS2,MON~MON,SKR5/HAS1,6,800,283,38447,Busan(BPTG)-Busan(BCT)-Shimizu-Kashima-Hidachinaka-Sendai-Hachinohe
+262,BCT,JPN,THS3,Mon-Mon,,,,,,Busan(BPTG)-Busan(BCT)-Tomakomai-Sendai
+263,BCT,JPN,THS4,Sat~Sun,HAS1,1,700,224,22123,Busan(BPTG)-Busan(BCT)-Naoetsu-Akita-Tomakomai
+264,BCT,JPN,THS5,Mon~Tue,HAS1,1,1100,240,7955,Busan(BPTS)-Busan(BCT)-Ishikariwan-Tomakomai-Akita
+265,BCT,IA,CKJ,WED~THU ,CKL1/KMD1,2,1000,196,9027,Xingang-Dalian-Pohang-Pusan(HKT)-Niigata-Toyamashinko-Naoetsu-Ulsan-Pusan(HKT)-Pusan(New)-Xingang
+266,BCT,AUS,A3N,Wed~Thu,ANL4/OOL1/COS1,6,5700,1800,8964,Osaka-Busan-Qingdao-Shanghai-Kaohsiung-Melbourne-Sydney-Brisbane-Yokohama
+267,BCT,IA,CSE1,Sat~Sat,CNC5,5,1700,503,7520,Dalian-Incheon-Ningbo-Shanghai-LaemChabang-Bangkok-LaemChabang-Manila-QuiNhon-ChuLai-Busan
+268,BCT,Africa,SWS,Sat~Sun,PIL12,12,4300,501,6964,Xingang-Qingdao-Busan-Shanghai-Ningbo-Nansha-Singapore-Tema-Lome-Lagos-Onne-Lome-PortKelang-Singapore-Xingang
+269,BCT,JPN,JP5,Sun~Sun,PCL1,1,700,121,7695,Ulsan-Busan-BusanNewPort(BCT)-Busan-Hiroshima-Kobe-Osaka-Takamatsu-Mizushima
+270,BCT,JPN,BSS2,Mon~Mon,SKR1,1,700,204,5979,"Kwangyang-Busan(BPTG)-Busan(BCT)-Hakata-Moji-Oita-
+Shibushi-Kochi-Hibiki"
+271,BCT,JPN,SKX2,Tue~Wed,SKR1,1,700,126,5317,KRPUS-KRPUS(BCT)-JPTKY-JPIYM-JPIMB-JPMYJ-JPMIZ-JPIWK
+272,BCT,JPN,SETO4,Sun~Sun,SKR1,1,550,126,6636,Busan-Busan(BCT)-Shibushi-Nagasaki-Kumamoto-Satsumasendai-Yatsushiro-Imarisaga
+273,BCT,JPN,PKX,Tue~Tue,HAS1,1,320,46,2690,Ulsan-Busan(BPTS)-Busan(BCT)-Imari-Miike-Satsuma-Busan(BPTS)
+274,BCT,TP,PELICAN,Thu~Fri,MSC & ZIM,11,8500,4125,123885,VungTau-Xiamen-Yantian-Busan-LazaroCardenas-Panama-Houston-Mobile-Tampa-Miami
+275,BCT,TP,NUE,Sat~Sun,EMC10,10,12000,1216,72000,Qingdao-Shanghai-Ningbo-Pusan-PanamaCanal-ColonContainerTerminal-Savannah-Charleston-Boston-NewYork
+276,BCT,JPN,BKS1,,DJS,1,,,,
+277,BCT,Intra-Asia,WJP,TBD~TBD,WNL,3,550,100,5000,WUHAN-JIUJIANG-BUSAN
+278,BCT,CKJ,HHH1,TBD~TBD,WNL3,3,550,350,17500,WUHAN-BUSAN-MOJI-OSAKA-NAYOYA-YOKOHAMA-TOKYO-WUHAN
+279,BCT,CHN,HHH2,THU~THU,WNL1,1,560,850,42500,NANJING-TAIZHOU-BUSAN-NANJING
+280,BCT,Intra-Asia,ITX,Tue~Tue,ILN3,3,1000,152,17651,Keelung-Taichung-Kaohsiung-Naha-Yatsushrio-Shibushi-Hososhima-Oita-Matsuyama-Busan-Yatsushiro-Naha-Keelung
+281,BCT,CHN,AWCE,WED~WED,SLK4/TSL2,6,4000,700,35000,CNTAO?CNSHA?CNNGB?KRPUS
+282,BCT,USWC,AWCW,MON~MON,SLK4/TSL2,6,4000,500,25000,USLGB-KRPUS-CNTAO
+283,BCT,RUS,CRS,WED~THU,VUX,2,1300,300,15000,KRPUS-(CNTXG)-CNRZH-CNNGB-CNSHA-RUVVO-RUVRA-KRPUS
+284,BCT,SA,AX4,MON~TUE,ONE2/HMM1,3,5000,2000,32568,Shanghai-Busan-LazaroCardenas
+285,BCT,SA,ZATW,MON~TUE,ZIM11,11,3500,1900,47460,TianjinXingang-Qingdao-Shanghai-Ningbo-Busan(PNC)-LazaroCardenas-Buenaventura-Guayaquil-Callao-SanAntonio-Busan(BCT)-TianjinXingang
+286,DGT,Intra-Asia,NSB,Thu ~ Fri,EMC,4,2800,1730,100000,Pusan - Gwangyang - Taipei - Kaohsiung - Sheikou - Johor Bahru - Port Kelang - Tanjong Relepas - Singapore - Kaohsiung
+287,DGT,Intra-Asia,KTH,Thu ~ Fri,EMC,3,1800,600,40000,Ulsan - Buasn - Gwangyang - Incheon - Taipei - Kaohsiung - Haiphong - Kaohsiung - Taipei - Hakata
+288,DGT,CHN,AK8,Mon ~ Mon,COH,1,1500,780,39000,Pusan - Incheon -  Lianyungang - Qingdao - Pusan
+289,DGT,CHN,AK4,Tue,COH,1,1700,1000,50000,Busan(HKT) - Busan(DGT) - Lianyungang - Qingdao
+290,DGT,CHN,KCE2,"Sat ~ Sat
+(Bi-weekly)",EAS,1,1200,1000,10000,Busan- Gwangyang- Yantai- Qingtao- Lianyungang- Dalian- Shanghai- Ningbo
+291,DGT,CHN,YNT,Tue18 ~ Wed14,EAS,1,1700,1400,70000,Pusan - Gwangyang - Yantian - Tianjin
+292,DGT,RUS,GBS,Sat ~ Sun,TKA,4,1150,350,17500,Vostochiny-Busan-Tianjin
+293,DGT,RUS,TAS,Wed-Thu,SWL,2,1750,500,25000,Kaohsiung -Xingang-Qingtao-Busan-Port Vila-Nomuea-Lautoka-Suva-Nuku Alofa-Apia-Pago Pago-Prony-Noumea-Santo
+294,DGT,Pacific,KJHK,Tue,PAN,1,634,300,15000,Busan(DGT)-Busan(HKT)-Kobe-Tokyo-Yokohama-Nagoya
+295,DGT,Intra-Asia,CI5,Tue ~ Wed,"WHL2/KMTC/
+IAL/BTL",5,4300,1850,92500," Qingtao - Pusan - Shanghai - Shekou - Port Kelang - Madras - Kattupalli -
+ Port Kelang - Singapore - Pasir Gudang - Shekou - Kaohsiung"
+296,DGT,JPN,ITX,Tue~Tue,ILN2,3,1000,152,17600,Keelung-Taichung-Kaohsiung-Naha-Yatsushrio-Shibushi-Hososhima-Oita-Matsuyama-Busan-Yatsushiro-Naha-Keelung
+297,DGT,CHN,NTP,THU~THU,WNL1,1,560,850,42500,BUSAN - DALIAN - NANJING - TAIZHOU 
+298,DGT,IA,WJP,TBD~TBD,WNL,3,550,100,12000,BUSAN - MOJI-OSAKA-NAYOYA-YOKOHAMA-TOKYO - WUHAN - JIUJIANG
+299,DGT,JPN,JK1,Wed~Thu,ONE1,1,1000,1439,71950,Busan-Shimizu-Tokyo-Busan
+300,DGT,RUS,CRS,Sun,VSS0/VUX3,3,1300,300,15000,BUSAN-RIZHAO-NINGBO-SHANGHAI-VLADIVOSTOK-VRANGEL BAY
+301,DGT,TP,"AWCE
+(APX)",WED~WED,SLK3/TSL2/KMTC,6,4000,700,35000,CNTAO ? CNSHA ? CNNGB ? KRPUS
+302,DGT,,"AWCW
+(APX)",MON~MON,SLK3/TSL2/KMTC,6,4000,500,25000,USLGB - KRPUS- CNTAO
+303,DGT,SA,SX2 (FL2),Thu-Fri,ONE7/HMM3,10,8000,2000,100000,"Busan, Shekou, Singapore, Rio Grande, Itapoa,Santos, Singapore, Hong Kong, Busan"
+304,DGT,JPN,BKS1,,,,,,,
+305,DGT,TP,NUE,Sat~Sun,EMC10,10,12000,1216,72000,Qingdao-Shanghai-Ningbo-Pusan-PanamaCanal-ColonContainerTerminal-Savannah-Charleston-Boston-NewYork
