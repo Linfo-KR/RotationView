@@ -1,10 +1,30 @@
 import { useState, useEffect, useMemo } from 'react';
 import { routeService } from '../services/api';
 
+const REGIONS = [
+  { id: 'ALL', name: '전체 해역' },
+  { id: 'K/C/J', name: 'K/C/J' },
+  { id: 'China', name: 'China' },
+  { id: 'Japan', name: 'Japan' },
+  { id: 'Russia', name: 'Russia' },
+  { id: 'SE Asia', name: 'SE Asia' },
+  { id: 'ISC', name: 'ISC' },
+  { id: 'ME', name: 'ME' },
+  { id: 'FE-MED', name: '지중해' },
+  { id: 'FE-N.Eur', name: '북유럽' },
+  { id: 'FE-ECNA', name: '미주 동안' },
+  { id: 'FE-WCNA', name: '미주 서안' },
+  { id: 'FE-ECSA', name: '남미 동안' },
+  { id: 'FE-WCSA', name: '남미 서안' },
+  { id: 'ANZ', name: '오세아니아' },
+  { id: 'SAF/WAF', name: '아프리카' },
+];
+
 const RouteList = ({ onSelectRoute, selectedRouteId, isCollapsed, toggleSidebar }) => {
   const [routes, setRoutes] = useState([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
+  const [selectedRegion, setSelectedRegion] = useState('ALL');
   const [page, setPage] = useState(1);
   const [years, setYears] = useState([]);
   const [selectedYear, setSelectedYear] = useState(null);
@@ -50,12 +70,16 @@ const RouteList = ({ onSelectRoute, selectedRouteId, isCollapsed, toggleSidebar 
 
   const filteredRoutes = useMemo(() => {
     const term = searchTerm.toLowerCase();
-    return routes.filter(route => 
-      (route.svc && route.svc.toLowerCase().includes(term)) ||
-      (route.route_name && route.route_name.toLowerCase().includes(term)) ||
-      (route.carriers && route.carriers.toLowerCase().includes(term))
-    );
-  }, [routes, searchTerm]);
+    return routes.filter(route => {
+      const matchesSearch = 
+        (route.svc && route.svc.toLowerCase().includes(term)) ||
+        (route.route_name && route.route_name.toLowerCase().includes(term)) ||
+        (route.carriers && route.carriers.toLowerCase().includes(term));
+      
+      const matchesRegion = selectedRegion === 'ALL' || route.region === selectedRegion;
+      return matchesSearch && matchesRegion;
+    });
+  }, [routes, searchTerm, selectedRegion]);
 
   const paginatedRoutes = useMemo(() => {
     const start = (page - 1) * itemsPerPage;
@@ -116,6 +140,24 @@ const RouteList = ({ onSelectRoute, selectedRouteId, isCollapsed, toggleSidebar 
             />
             <svg className="w-4 h-4 text-gray-400 absolute left-2 top-2.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>
         </div>
+      </div>
+
+      {/* Region Filter Chips */}
+      <div className="flex gap-1.5 overflow-x-auto py-2.5 px-3 bg-gray-100/80 border-b border-gray-200 scrollbar-thin">
+        {REGIONS.map(r => (
+          <button
+            key={r.id}
+            type="button"
+            onClick={() => { setSelectedRegion(r.id); setPage(1); }}
+            className={`px-3 py-1 rounded-full text-xs font-bold whitespace-nowrap border transition-all duration-200 ${
+              selectedRegion === r.id
+                ? 'bg-[#003399] text-white border-[#003399] shadow-sm'
+                : 'bg-white text-gray-600 border-gray-300 hover:bg-gray-50'
+            }`}
+          >
+            {r.name}
+          </button>
+        ))}
       </div>
 
       {/* List Content */}
