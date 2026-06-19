@@ -12,13 +12,25 @@ const api = axios.create({
 
 export const routeService = {
   // Get all available routes
-  getAllRoutes: async () => {
+  getAllRoutes: async (year = null) => {
     try {
       // Increase limit to fetch more routes for testing
-      const response = await api.get('/routes?limit=1000');
+      const url = year ? `/routes?limit=1000&year=${year}` : '/routes?limit=1000';
+      const response = await api.get(url);
       return response.data;
     } catch (error) {
       console.error('Error fetching routes:', error);
+      throw error;
+    }
+  },
+  
+  // Get distinct years available in database
+  getRouteYears: async () => {
+    try {
+      const response = await api.get('/routes/years');
+      return response.data;
+    } catch (error) {
+      console.error('Error fetching route years:', error);
       throw error;
     }
   },

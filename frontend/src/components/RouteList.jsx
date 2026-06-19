@@ -6,13 +6,39 @@ const RouteList = ({ onSelectRoute, selectedRouteId, isCollapsed, toggleSidebar 
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
   const [page, setPage] = useState(1);
+  const [years, setYears] = useState([]);
+  const [selectedYear, setSelectedYear] = useState(null);
   const itemsPerPage = 20;
 
+  // 1. Fetch available years on mount
   useEffect(() => {
-    const fetchRoutes = async () => {
+    const fetchYears = async () => {
       try {
-        const data = await routeService.getAllRoutes();
+        const data = await routeService.getRouteYears();
+        setYears(data);
+        if (data && data.length > 0) {
+          setSelectedYear(data[0]); // Default to latest year
+        } else {
+          setSelectedYear(2026);
+        }
+      } catch (err) {
+        console.error("Failed to load route years", err);
+        setSelectedYear(2026);
+      }
+    };
+    fetchYears();
+  }, []);
+
+  // 2. Fetch routes when selectedYear changes
+  useEffect(() => {
+    if (!selectedYear) return;
+
+    const fetchRoutes = async () => {
+      setLoading(true);
+      try {
+        const data = await routeService.getAllRoutes(selectedYear);
         setRoutes(data);
+        setPage(1); // Reset page on year change
       } catch (err) {
         console.error("Failed to load routes", err);
       } finally {
@@ -20,14 +46,14 @@ const RouteList = ({ onSelectRoute, selectedRouteId, isCollapsed, toggleSidebar 
       }
     };
     fetchRoutes();
-  }, []);
+  }, [selectedYear]);
 
   const filteredRoutes = useMemo(() => {
     const term = searchTerm.toLowerCase();
     return routes.filter(route => 
-      (route.service_code && route.service_code.toLowerCase().includes(term)) ||
+      (route.svc && route.svc.toLowerCase().includes(term)) ||
       (route.route_name && route.route_name.toLowerCase().includes(term)) ||
-      (route.consortium && route.consortium.toLowerCase().includes(term))
+      (route.carriers && route.carriers.toLowerCase().includes(term))
     );
   }, [routes, searchTerm]);
 
@@ -59,6 +85,27 @@ const RouteList = ({ onSelectRoute, selectedRouteId, isCollapsed, toggleSidebar 
             <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 19l-7-7 7-7m8 14l-7-7 7-7" /></svg>
           </button>
         </div>
+
+        {/* Year Toggle Switch (Segmented Control) */}
+        {years.length > 0 && (
+          <div className="flex bg-blue-950/60 p-1 rounded-lg mb-3 border border-blue-800/40 relative">
+            {years.map(y => (
+              <button
+                key={y}
+                type="button"
+                onClick={() => setSelectedYear(y)}
+                className={`flex-1 text-center py-1.5 rounded-md text-xs font-bold transition-all duration-300 z-10 ${
+                  selectedYear === y
+                    ? 'bg-gradient-to-r from-blue-600 to-blue-500 text-white shadow-md shadow-blue-900/30'
+                    : 'text-blue-200 hover:text-white hover:bg-blue-800/30'
+                }`}
+              >
+                {y}년 노선도
+              </button>
+            ))}
+          </div>
+        )}
+
         <div className="relative">
             <input 
               type="text" 

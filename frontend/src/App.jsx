@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import RouteList from './components/RouteList';
 import MapVisualizer from './components/MapVisualizer';
 import InfoOverlay from './components/InfoOverlay';
+import RotationTimeline from './components/RotationTimeline';
 import { portService, routeService } from './services/api';
 
 import './App.css';
@@ -15,6 +16,7 @@ function App() {
   
   // UI State
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
+  const [isTimelineOpen, setIsTimelineOpen] = useState(false);
 
   useEffect(() => {
     const fetchPorts = async () => {
@@ -34,15 +36,14 @@ function App() {
   const handleSelectRoute = async (route) => {
     setSelectedRoute(route); // Immediate feedback with basic data
     setRouteDetail(null); // Clear previous detail
+    setIsTimelineOpen(true); // 노선 선택 시 우측 슬라이드 타임라인 자동 활성화!
     
     try {
-        // Fetch full details (including Proforma)
         const id = route.route_idx || route.id;
         const detail = await routeService.getRouteById(id);
         setRouteDetail(detail);
     } catch (e) {
         console.error("Failed to load route detail", e);
-        // Fallback to basic route data if detail fetch fails
         setRouteDetail(route);
     }
   };
@@ -64,7 +65,7 @@ function App() {
     <div className="flex h-screen bg-gray-100 overflow-hidden">
       {/* Sidebar Area */}
       <div 
-        className={`transition-all duration-300 ease-in-out border-r border-gray-300 bg-white z-20 flex-shrink-0 ${
+        className={`transition-all duration-300 ease-in-out border-r border-gray-300 bg-white z-25 flex-shrink-0 ${
             isSidebarCollapsed ? 'w-16' : 'w-80'
         }`}
       >
@@ -76,22 +77,46 @@ function App() {
         />
       </div>
 
-      {/* Main Map Area */}
-      <div className="flex-1 relative">
-        <MapVisualizer 
-            selectedRoute={selectedRoute} 
-            allPorts={allPorts} 
-            onRouteUpdated={() => {
-                if (selectedRoute) {
-                    handleSelectRoute(selectedRoute);
-                }
-            }}
+      {/* Main Map & Interactive Panel Area */}
+      <div className="flex-1 relative overflow-hidden flex">
+        <div className="flex-1 h-full relative">
+          <MapVisualizer 
+              selectedRoute={routeDetail || selectedRoute} 
+              allPorts={allPorts} 
+              isTimelineOpen={isTimelineOpen}
+              onRouteUpdated={() => {
+                  if (selectedRoute) {
+                      handleSelectRoute(selectedRoute);
+                  }
+              }}
+          />
+          
+          {/* Info Overlay (Floating on top of map) */}
+          {routeDetail && (
+              <InfoOverlay route={routeDetail} />
+          )}
+
+          {/* 우측 정보 패널 열렸을 때 지도 우하단 컨트롤 가림 보정을 위한 여백 토글 버튼 */}
+          {selectedRoute && !isTimelineOpen && (
+            <button
+              onClick={() => setIsTimelineOpen(true)}
+              className="absolute top-[80px] right-4 z-[1000] p-2.5 rounded-lg bg-slate-900/90 text-cyan-400 border border-slate-700/50 hover:bg-slate-800/90 shadow-xl transition-all duration-300 backdrop-blur-sm"
+              title="Open Rotation Timeline"
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                <path fillRule="evenodd" d="M3 5a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 5a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 5a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z" clipRule="evenodd" />
+              </svg>
+            </button>
+          )}
+        </div>
+
+        {/* 🏢 우측 슬라이드 로테이션 타임라인 & 부산항 터미널 연동 패널 */}
+        <RotationTimeline
+          selectedRoute={routeDetail || selectedRoute}
+          isOpen={isTimelineOpen}
+          onClose={() => setIsTimelineOpen(false)}
+          onToggle={() => setIsTimelineOpen(!isTimelineOpen)}
         />
-        
-        {/* Info Overlay (Floating on top of map) */}
-        {routeDetail && (
-            <InfoOverlay route={routeDetail} />
-        )}
       </div>
     </div>
   );
