@@ -412,23 +412,40 @@ def calculate_route_geometry(
             for pt in inbound_raw:
                 pt[1] += shift_offset
 
+    # 총 노선 거리(단거리 피더 여부 판단 및 성능 최적화용) 계산
+    total_distance = 0.0
+    for i in range(len(coords_list) - 1):
+        total_distance += haversine(
+            coords_list[i][0], coords_list[i][1],
+            coords_list[i + 1][0], coords_list[i + 1][1]
+        )
+
+    # 🌟 지능형 오프셋(Adaptive Offsetting): 단거리 로컬 피더는 육지 관통/겹침 방지를 위해 오프셋 축소
+    adjusted_offset_km = offset_km
+    if total_distance < 3000.0:
+        adjusted_offset_km = min(offset_km, 18.0)
+
     # B. 언래핑 및 쉬프트가 완벽히 완료된 상태에서 꼬임 없이 오프셋 평행선을 연산
     if apply_offset:
         if outbound_raw:
             lng_lat_line = [[c[1], c[0]] for c in outbound_raw]
-            off_line = offset_polyline(lng_lat_line, offset_km, port_coords=coords_list)
+            off_line = offset_polyline(lng_lat_line, adjusted_offset_km, port_coords=coords_list)
             outbound_raw = [[c[1], c[0]] for c in off_line]
 
         if inbound_raw:
             lng_lat_line = [[c[1], c[0]] for c in inbound_raw]
-            off_line = offset_polyline(lng_lat_line, -offset_km, port_coords=coords_list)
+            off_line = offset_polyline(lng_lat_line, -adjusted_offset_km, port_coords=coords_list)
             inbound_raw = [[c[1], c[0]] for c in off_line]
 
-    # C. 오프셋이 완벽하게 끝난 선에 대해 RDP 단순화 수행
+    # C. 오프셋이 완벽하게 끝난 선에 대해 RDP 단순화 수행 (로컬 피더는 곡선 보존을 위해 epsilon 축소)
+    epsilon_val = 0.1
+    if total_distance < 3000.0:
+        epsilon_val = 0.03
+
     if outbound_raw:
-        outbound_raw = simplify_polyline(outbound_raw, epsilon=0.1)
+        outbound_raw = simplify_polyline(outbound_raw, epsilon=epsilon_val)
     if inbound_raw:
-        inbound_raw = simplify_polyline(inbound_raw, epsilon=0.1)
+        inbound_raw = simplify_polyline(inbound_raw, epsilon=epsilon_val)
 
     # D. 마지막에 날짜변경선을 기준으로 쪼개는 대신 단일 세그먼트로 감싸서 넘김
     outbound_lines = split_polyline_at_antimeridian(outbound_raw)
@@ -436,13 +453,6 @@ def calculate_route_geometry(
 
     outbound_arrows = _extract_arrow_points(outbound_slice)
     inbound_arrows = _extract_arrow_points(inbound_slice)
-
-    total_distance = 0.0
-    for i in range(len(coords_list) - 1):
-        total_distance += haversine(
-            coords_list[i][0], coords_list[i][1],
-            coords_list[i + 1][0], coords_list[i + 1][1]
-        )
 
     return {
         "outbound": outbound_lines,
