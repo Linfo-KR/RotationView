@@ -12,12 +12,17 @@ from app import main as m
 
 db = SessionLocal()
 try:
+    print("=== Test 1: CBX Route ===")
     result = m.calculate_route_geometry(db, "Port Klang,Haiphong,Yantian,Ningbo,Shanghai,Busan,Yokohama,Norfolk,Savannah,Charleston,Miami,Port Klang")
     print("outbound segments:", len(result['outbound']))
     print("inbound segments:", len(result['inbound']))
-    for i, seg in enumerate(result['outbound']):
-        print(f"  outbound[{i}] pts={len(seg)}, first={seg[0]}, last={seg[-1]}")
-    for i, seg in enumerate(result['inbound']):
-        print(f"  inbound[{i}] pts={len(seg)}, first={seg[0]}, last={seg[-1]}")
+    print("segment_distances:", result.get('segment_distances'))
+    
+    print("\n=== Test 2: India bypass (Jebel Ali -> Tanjung Pelepas) ===")
+    result_india = m.calculate_route_geometry(db, "Jebel Ali,Tanjung Pelepas,Jebel Ali")
+    print("outbound segments:", len(result_india['outbound']))
+    print("inbound segments:", len(result_india['inbound']))
+    print("total distance (km):", result_india.get('total_distance_km'))
+    print("segment_distances:", result_india.get('segment_distances'))
 finally:
     db.close()

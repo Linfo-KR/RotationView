@@ -406,16 +406,44 @@ def _match_port_coordinates(db: Session, port_names: List[str]) -> List[List[flo
 def _find_turn_index(coords_list: List[List[float]]) -> int:
     """시작 항구에서 가장 멀리 있는 항구(회차점)의 인덱스를 계산합니다.
 
+    단순 Haversine 최장 거리 기준과 지리적 리전 시퀀스 분석을 병합하여
+    출발 리전에서 타겟 리전으로 진입했다가 다시 출발 리전으로 복귀하기 직전의
+    최적의 회차점을 판정합니다.
+
     Args:
-        coords_list (List[List[float]]): 항구 좌표 목록
+        coords_list (List[List[float]]): 항구 좌표 목록 [[lng, lat], ...]
 
     Returns:
         int: 회차점 기항지 인덱스
     """
-    if not coords_list:
+    if not coords_list or len(coords_list) < 2:
         return 0
+
+    # 1. 각 좌표별 대략적인 해역 리전 판별
+    regions = [_determine_region(lng, lat) for lng, lat in coords_list]
+    start_region = regions[0]
+
+    # 2. 리전 변경 시퀀스 추적
+    # 출발 리전을 벗어나 다른 리전에 진입했다가, 다시 출발 리전으로 돌아오기 전의 마지막 다른 리전의 인덱스 탐색
+    foreign_idx = -1
+    return_idx = -1
+
+    for idx, r in enumerate(regions):
+        if r != start_region and r != "UNKNOWN":
+            foreign_idx = idx
+        elif foreign_idx != -1 and r == start_region:
+            return_idx = idx
+            break
+
+    # 타겟 리전에서 출발 리전으로 돌아오는 구간이 존재하면 그 직전 항구를 회차점으로 선정
+    if foreign_idx != -1 and return_idx != -1:
+        turn_idx = max(foreign_idx, return_idx - 1)
+        if 0 < turn_idx < len(coords_list) - 1:
+            return turn_idx
+
+    # 3. Fallback: 기존 Haversine 기준 최장 거리 항구 탐색
     start_lon, start_lat = coords_list[0]
-    max_dist = -1
+    max_dist = -1.0
     turn_idx = 0
     for i, (lon, lat) in enumerate(coords_list):
         d = haversine(start_lon, start_lat, lon, lat)
