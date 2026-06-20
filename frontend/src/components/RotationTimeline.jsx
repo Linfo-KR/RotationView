@@ -1,4 +1,7 @@
-import { useMemo } from 'react';
+import { useMemo, useState } from 'react';
+import html2canvas from 'html2canvas';
+import { jsPDF } from 'jspdf';
+import { getOptimizedBounds } from './map/mapHelpers';
 
 /**
  * RotationTimeline - 노선의 기항지 순서(Rotation) 및 부산항 상하역 터미널 스케줄(Proforma)을
@@ -6,6 +9,129 @@ import { useMemo } from 'react';
  * 좌측 가장자리에 밀착된 일체형 플로팅 세로 탭을 통해 상시 접고 펴기가 가능합니다.
  */
 const RotationTimeline = ({ selectedRoute, isOpen, onClose, onToggle }) => {
+  const [exporting, setExporting] = useState(false);
+
+  const handleExportPDF = async () => {
+    if (!selectedRoute) return;
+    setExporting(true);
+
+    try {
+      // 1. 최적 바운즈 획득을 위한 좌표 정보 수집
+      let allPoints = [];
+      if (selectedRoute.coordinates) {
+        const coords = selectedRoute.coordinates;
+        if (Array.isArray(coords)) {
+          allPoints = coords;
+        } else {
+          if (coords.outbound) coords.outbound.forEach(line => allPoints.push(...line));
+          if (coords.inbound) coords.inbound.forEach(line => allPoints.push(...line));
+        }
+      }
+
+      const mapInstance = window.leafletMap;
+      let oldCenter = null;
+      let oldZoom = null;
+
+      // 2. 지도 최적 Fit-Bounds 강제 적용 (캡처용)
+      if (mapInstance && allPoints.length > 0) {
+        oldCenter = mapInstance.getCenter();
+        oldZoom = mapInstance.getZoom();
+        const boundsData = getOptimizedBounds(allPoints);
+        if (boundsData) {
+          mapInstance.fitBounds(boundsData, { animate: false, padding: [40, 40] });
+        }
+        // 타일 및 마커의 렌더링 동기화를 위해 대기
+        await new Promise((resolve) => setTimeout(resolve, 800));
+      }
+
+      // 3. 지도 및 타임라인 영역 캡처
+      const mapEl = document.querySelector('.leaflet-container');
+      const timelineEl = document.querySelector('#timeline-scroll-container');
+      
+      if (!mapEl || !timelineEl) {
+        alert("지도 또는 타임라인 영역을 찾을 수 없습니다.");
+        return;
+      }
+
+      const mapCanvas = await html2canvas(mapEl, {
+        useCORS: true,
+        logging: false,
+        scale: 2 // 고해상도 캡처
+      });
+
+      // 원래 사용자의 맵 뷰로 원복
+      if (mapInstance && oldCenter && oldZoom) {
+        mapInstance.setView(oldCenter, oldZoom, { animate: false });
+      }
+
+      // 타임라인 캡처 (가려진 스크롤 포함 전체 영역 캡처)
+      const timelineCanvas = await html2canvas(timelineEl, {
+        useCORS: true,
+        logging: false,
+        scale: 2,
+        height: timelineEl.scrollHeight, // 스크롤 전체 높이 캡처
+        windowHeight: timelineEl.scrollHeight
+      });
+
+      // 4. 고해상도 PDF 직조 (A4 Landscape, 297mm x 210mm)
+      const doc = new jsPDF({
+        orientation: 'landscape',
+        unit: 'mm',
+        format: 'a4'
+      });
+
+      // 테마 배경색 및 장식선 추가 (슬레이트/네이비 프리미엄 브랜딩)
+      doc.setFillColor(15, 23, 42); // slate-900 헤더 배경
+      doc.rect(0, 0, 297, 35, 'F');
+
+      // 헤더 텍스트
+      doc.setFont('helvetica', 'bold');
+      doc.setFontSize(16);
+      doc.setTextColor(56, 189, 248); // sky-400
+      doc.text("BPA PORT ROTATION REPORT", 15, 13);
+
+      doc.setFontSize(10);
+      doc.setFont('helvetica', 'normal');
+      doc.setTextColor(203, 213, 225); // slate-300
+      doc.text(`Service Route: ${selectedRoute.svc || 'N/A'} - ${selectedRoute.route_name || 'N/A'}`, 15, 21);
+      doc.text(`Carriers: ${selectedRoute.carriers || 'N/A'}   |   Vessels: ${selectedRoute.ships || 'N/A'}   |   Duration: ${selectedRoute.duration ? `${selectedRoute.duration} Days` : 'N/A'}`, 15, 27);
+
+      // 본문 콘텐츠 배치 (A4에 최적화된 비율 계산)
+      // 1) 좌측 지도 이미지
+      const mapImgData = mapCanvas.toDataURL('image/png');
+      doc.setFillColor(248, 250, 252); // slate-50 본문 배경
+      doc.rect(12, 42, 166, 154, 'F');
+      doc.setDrawColor(226, 232, 240); // slate-200 테두리
+      doc.rect(12, 42, 166, 154, 'S');
+      doc.addImage(mapImgData, 'PNG', 14, 44, 162, 150);
+
+      // 2) 우측 타임라인 이미지
+      const timelineImgData = timelineCanvas.toDataURL('image/png');
+      doc.setFillColor(248, 250, 252);
+      doc.rect(184, 42, 101, 154, 'F');
+      doc.rect(184, 42, 101, 154, 'S');
+      
+      // 타임라인 이미지 가로/세로 비율 맞추어 삽입
+      const timelineWidth = 97;
+      const timelineHeight = 150;
+      doc.addImage(timelineImgData, 'PNG', 186, 44, timelineWidth, timelineHeight);
+
+      // 푸터 브랜딩
+      doc.setFont('helvetica', 'normal');
+      doc.setFontSize(8);
+      doc.setTextColor(148, 163, 184); // slate-400
+      doc.text("Generated automatically by BPA PortPath System. All data rights reserved.", 15, 204);
+
+      // 파일 다운로드 저장
+      doc.save(`BPA_Route_${selectedRoute.svc || 'Detail'}.pdf`);
+    } catch (error) {
+      console.error("PDF export failed:", error);
+      alert("PDF 리포트 생성에 실패했습니다. 콘솔 에러를 확인하세요.");
+    } finally {
+      setExporting(false);
+    }
+  };
+
   const rotationList = useMemo(() => {
     if (!selectedRoute || !selectedRoute.port_rotation) return [];
     return selectedRoute.port_rotation
@@ -69,20 +195,46 @@ const RotationTimeline = ({ selectedRoute, isOpen, onClose, onToggle }) => {
       <div className="p-5 border-b border-slate-800/80 flex items-center justify-between flex-shrink-0">
         <div className="flex flex-col">
           <span className="text-[10px] text-cyan-400 font-bold uppercase tracking-wider">Rotation Details</span>
-          <h2 className="text-base font-bold text-slate-100 truncate max-w-[280px]" title={selectedRoute.route_name}>
+          <h2 className="text-base font-bold text-slate-100 truncate max-w-[200px]" title={selectedRoute.route_name}>
             {selectedRoute.route_name || 'No Name'}
           </h2>
           <span className="text-xs text-slate-400 mt-0.5">Svc: <strong className="text-slate-200">{selectedRoute.svc || 'N/A'}</strong></span>
         </div>
-        <button
-          onClick={onClose}
-          className="p-1.5 rounded-lg bg-slate-800/80 hover:bg-slate-700/80 border border-slate-700/50 text-slate-300 hover:text-slate-100 transition-all duration-300"
-          title="Close Panel"
-        >
-          <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
-            <path fillRule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clipRule="evenodd" />
-          </svg>
-        </button>
+        <div className="flex items-center gap-2">
+          {/* 📥 PDF 엑스포트 액션 버튼 */}
+          <button
+            onClick={handleExportPDF}
+            disabled={exporting}
+            className={`px-3 py-1.5 rounded-lg text-xs font-bold border transition-all duration-200 flex items-center gap-1.5 ${
+              exporting
+                ? 'bg-slate-800 text-slate-500 border-slate-700 cursor-not-allowed'
+                : 'bg-cyan-950/40 text-cyan-400 border-cyan-500/30 hover:bg-cyan-900/40 hover:border-cyan-400 hover:text-white cursor-pointer'
+            }`}
+            title="Download PDF Report"
+          >
+            {exporting ? (
+              <>
+                <div className="animate-spin rounded-full h-3 w-3 border-b-2 border-cyan-400"></div>
+                <span>Exporting...</span>
+              </>
+            ) : (
+              <>
+                <span>📥</span>
+                <span>Export PDF</span>
+              </>
+            )}
+          </button>
+          
+          <button
+            onClick={onClose}
+            className="p-1.5 rounded-lg bg-slate-800/80 hover:bg-slate-700/80 border border-slate-700/50 text-slate-300 hover:text-slate-100 transition-all duration-300"
+            title="Close Panel"
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
+              <path fillRule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clipRule="evenodd" />
+            </svg>
+          </button>
+        </div>
       </div>
 
       {/* ── 중단 스펙 상세 카드 (PDF 스펙 레이아웃과 100% 싱크) ── */}
@@ -106,7 +258,7 @@ const RotationTimeline = ({ selectedRoute, isOpen, onClose, onToggle }) => {
       </div>
 
       {/* ── 하단 타임라인 스크롤 영역 (h-screen 높이에 완벽하게 FIT) ── */}
-      <div className="flex-1 overflow-y-auto p-5 space-y-6 custom-scrollbar">
+      <div id="timeline-scroll-container" className="flex-1 overflow-y-auto p-5 space-y-6 custom-scrollbar">
         <h3 className="text-xs font-bold text-slate-400 uppercase tracking-widest mb-2 flex items-center gap-1.5">
           <span>📍</span> Port Rotation Timeline
         </h3>
