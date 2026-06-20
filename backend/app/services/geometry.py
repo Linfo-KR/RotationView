@@ -420,7 +420,7 @@ def calculate_route_geometry(
             coords_list[i + 1][0], coords_list[i + 1][1]
         )
 
-    # 🌟 지능형 오프셋(Adaptive Offsetting): 단거리 로컬 피더는 육지 관통/겹침 방지를 위해 오프셋 축소
+    # 지능형 오프셋(Adaptive Offsetting): 단거리 로컬 피더는 육지 관통/겹침 방지를 위해 오프셋 축소
     adjusted_offset_km = offset_km
     if total_distance < 3000.0:
         adjusted_offset_km = min(offset_km, 18.0)

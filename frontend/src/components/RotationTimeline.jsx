@@ -85,15 +85,23 @@ const RotationTimeline = ({ selectedRoute, isOpen, onClose, onToggle }) => {
         </button>
       </div>
 
-      {/* ── 중단 스펙 상세 카드 ── */}
-      <div className="px-5 py-4 bg-slate-950/20 border-b border-slate-800/60 grid grid-cols-2 gap-3 text-xs flex-shrink-0">
-        <div className="p-2.5 rounded-lg bg-slate-800/20 border border-slate-800 flex flex-col gap-0.5">
+      {/* ── 중단 스펙 상세 카드 (PDF 스펙 레이아웃과 100% 싱크) ── */}
+      <div className="px-5 py-4 bg-slate-950/20 border-b border-slate-800/60 grid grid-cols-2 sm:grid-cols-4 gap-2 text-xs flex-shrink-0">
+        <div className="p-2 rounded-lg bg-slate-800/20 border border-slate-800 flex flex-col gap-0.5">
           <span className="text-[10px] text-slate-500 uppercase font-semibold">Frequency</span>
           <span className="font-bold text-slate-300">{selectedRoute.frequency || 'Weekly'}</span>
         </div>
-        <div className="p-2.5 rounded-lg bg-slate-800/20 border border-slate-800 flex flex-col gap-0.5">
+        <div className="p-2 rounded-lg bg-slate-800/20 border border-slate-800 flex flex-col gap-0.5">
           <span className="text-[10px] text-slate-500 uppercase font-semibold">Carriers</span>
           <span className="font-bold text-slate-300 truncate" title={selectedRoute.carriers}>{selectedRoute.carriers || 'N/A'}</span>
+        </div>
+        <div className="p-2 rounded-lg bg-slate-800/20 border border-slate-800 flex flex-col gap-0.5">
+          <span className="text-[10px] text-slate-500 uppercase font-semibold">Vessel / TEU</span>
+          <span className="font-bold text-slate-300 truncate" title={selectedRoute.ships}>{selectedRoute.ships || 'N/A'}</span>
+        </div>
+        <div className="p-2 rounded-lg bg-slate-800/20 border border-slate-800 flex flex-col gap-0.5">
+          <span className="text-[10px] text-slate-500 uppercase font-semibold">Duration</span>
+          <span className="font-bold text-slate-300">{selectedRoute.duration ? `${selectedRoute.duration} Days` : 'N/A'}</span>
         </div>
       </div>
 
@@ -106,8 +114,13 @@ const RotationTimeline = ({ selectedRoute, isOpen, onClose, onToggle }) => {
         <div className="relative border-l-2 border-slate-800 pl-5 ml-2.5 space-y-6">
           {rotationList.map((portName, idx) => {
             const isBusan = portName.toLowerCase().includes('busan');
-            // seq 매칭을 통해 모든 기항지의 proforma 데이터 연동
-            const matchedProforma = proformaList.filter(prof => prof.seq === idx + 1);
+            // 부산항 기항 차수(seq)를 정확히 계산하여 해당 차수의 proforma 정보만 매핑
+            const busanCount = isBusan 
+              ? rotationList.slice(0, idx + 1).filter(p => p.toLowerCase().includes('busan')).length 
+              : 0;
+            const matchedProforma = isBusan 
+              ? proformaList.filter(prof => prof.seq === busanCount) 
+              : [];
 
             return (
               <div key={`${portName}-${idx}`} className="relative">
