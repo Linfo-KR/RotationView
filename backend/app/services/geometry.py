@@ -420,10 +420,17 @@ def calculate_route_geometry(
             coords_list[i + 1][0], coords_list[i + 1][1]
         )
 
-    # 지능형 오프셋(Adaptive Offsetting): 단거리 로컬 피더는 육지 관통/겹침 방지를 위해 오프셋 축소
+    # 지능형 오프셋(Adaptive Offsetting): 위도별 메르카토르 왜곡 보정 및 노선 거리 비례 가변 오프셋 적용
+    avg_lat = sum(c[0] for c in coords_list) / len(coords_list) if coords_list else 0.0
+    lat_factor = math.cos(math.radians(avg_lat))
     adjusted_offset_km = offset_km
+    
     if total_distance < 3000.0:
-        adjusted_offset_km = min(offset_km, 18.0)
+        # 단거리 로컬 피더는 고위도(한중일 등)에서 육지 침범을 방지하고자 폭을 더 축소
+        adjusted_offset_km = min(offset_km, 18.0) * max(0.5, lat_factor)
+    else:
+        # 대양 노선도 극지방/고위도 진입 시 오프셋을 유동적으로 축소해 지형 관통 예방
+        adjusted_offset_km = offset_km * max(0.6, lat_factor)
 
     # B. 언래핑 및 쉬프트가 완벽히 완료된 상태에서 꼬임 없이 오프셋 평행선을 연산
     if apply_offset:
