@@ -17,6 +17,7 @@ function App() {
   // UI State
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
   const [isTimelineOpen, setIsTimelineOpen] = useState(false);
+  const [hoveredPortIndex, setHoveredPortIndex] = useState(null);
 
   useEffect(() => {
     const fetchPorts = async () => {
@@ -84,6 +85,8 @@ function App() {
               selectedRoute={routeDetail || selectedRoute} 
               allPorts={allPorts} 
               isTimelineOpen={isTimelineOpen}
+              hoveredPortIndex={hoveredPortIndex}
+              setHoveredPortIndex={setHoveredPortIndex}
               onRouteUpdated={() => {
                   if (selectedRoute) {
                       handleSelectRoute(selectedRoute);
@@ -114,6 +117,8 @@ function App() {
         <RotationTimeline
           selectedRoute={routeDetail || selectedRoute}
           isOpen={isTimelineOpen}
+          hoveredPortIndex={hoveredPortIndex}
+          setHoveredPortIndex={setHoveredPortIndex}
           onClose={() => setIsTimelineOpen(false)}
           onToggle={() => setIsTimelineOpen(!isTimelineOpen)}
         />

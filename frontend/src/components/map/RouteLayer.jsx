@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState, useMemo } from 'react';
-import { Polyline, Tooltip, useMap, useMapEvents } from 'react-leaflet';
+import { Polyline, Tooltip, useMap, useMapEvents, Marker } from 'react-leaflet';
 import L from 'leaflet';
 import { makeBezierCurve, getEquidistantArrows, splitPolylineAtAntimeridian } from './mapHelpers';
 import { MAP_SETTINGS } from '../../config/mapSettings';
@@ -22,6 +22,22 @@ const THEME_COLORS = {
     inColor: '#ff4488',
     inGlow: 'rgba(255, 68, 136, 0.28)',
     inArrow: '#ff5599',
+  },
+  lightSingle: {
+    outColor: '#0c2b64',
+    outGlow: 'rgba(12, 43, 100, 0.25)',
+    outArrow: '#004d99',
+    inColor: '#5988e2',
+    inGlow: 'rgba(89, 136, 226, 0.25)',
+    inArrow: '#4a78cc',
+  },
+  darkSingle: {
+    outColor: '#00d4ff',
+    outGlow: 'rgba(0, 212, 255, 0.25)',
+    outArrow: '#00a2cc',
+    inColor: '#7ce5ff',
+    inGlow: 'rgba(124, 229, 255, 0.25)',
+    inArrow: '#66c3db',
   },
 };
 
@@ -68,8 +84,9 @@ const ArrowMarker = ({ arrows, color }) => {
 
 // ── Legend ────────────────────────────────────
 
-export const RouteLegend = ({ theme, totalDistance }) => {
-  const colors = THEME_COLORS[theme] || THEME_COLORS.light;
+export const RouteLegend = ({ theme, totalDistance, isSingleColor }) => {
+  const colorsKey = isSingleColor ? `${theme}Single` : theme;
+  const colors = THEME_COLORS[colorsKey] || THEME_COLORS.light;
   const isDark = theme === 'dark';
 
   return (
@@ -79,7 +96,7 @@ export const RouteLegend = ({ theme, totalDistance }) => {
         <span className="font-semibold text-[11px]">Outbound</span>
       </div>
       <div className="legend-item">
-        <div className="legend-line ib-legend-line" style={{ backgroundColor: colors.inColor }} />
+        <div className="legend-line ib-legend-line" style={{ color: colors.inColor }} />
         <span className="font-semibold text-[11px]">Inbound</span>
       </div>
       {totalDistance > 0 && (
@@ -96,10 +113,11 @@ export const RouteLegend = ({ theme, totalDistance }) => {
 /**
  * RouteLayer: Outbound/Inbound 경로 렌더링 + 동적 실시간 화살표 + 흐름 애니메이션 오버레이.
  */
-const RouteLayer = ({ lineGeometry, theme = 'light' }) => {
+const RouteLayer = ({ lineGeometry, theme = 'light', isSingleColor = false }) => {
   if (!lineGeometry) return null;
 
-  const colors = THEME_COLORS[theme] || THEME_COLORS.light;
+  const colorsKey = isSingleColor ? `${theme}Single` : theme;
+  const colors = THEME_COLORS[colorsKey] || THEME_COLORS.light;
   const isDark = theme === 'dark';
 
   const outboundLines = lineGeometry.outbound || [];
@@ -311,6 +329,34 @@ const RouteLayer = ({ lineGeometry, theme = 'light' }) => {
       {/* 실시간 줌 레벨에 따라 동적으로 등간격 배치된 고감도 화살표 마커 */}
       <ArrowMarker arrows={outboundArrows} color={colors.outArrow} />
       <ArrowMarker arrows={inboundArrows} color={colors.inArrow} />
+
+      {/* 항로 위 주요 구간 거리 표시 배지 */}
+      {zoom >= 4 && (lineGeometry.segment_midpoints || []).map((pt, i) => {
+        const dist = (lineGeometry.segment_distances || [])[i];
+        if (dist === undefined || dist === null || dist === 0) return null;
+
+        const distText = `${Math.round(dist).toLocaleString()} km`;
+        const isOb = i < outboundLines.length;
+        const badgeColor = isOb ? colors.outColor : colors.inColor;
+
+        const textIcon = L.divIcon({
+          className: 'segment-distance-badge-icon',
+          html: `<div class="segment-distance-badge" style="background-color: ${badgeColor}; border: 1.5px solid #ffffff; box-shadow: 0 1px 3px rgba(0,0,0,0.3)">
+            ${distText}
+          </div>`,
+          iconSize: [64, 20],
+          iconAnchor: [32, 10],
+        });
+
+        return (
+          <Marker
+            key={`dist-${i}`}
+            position={pt}
+            icon={textIcon}
+            interactive={false}
+          />
+        );
+      })}
     </>
   );
 };

@@ -69,6 +69,7 @@ export const makeBezierCurve = (points) => {
  */
 // Turf.js along 연산 병목 제거를 위한 인메모리 화살표 캐시 맵 선언
 const arrowCache = new Map();
+const MAX_ARROW_CACHE_SIZE = 200; // 메모리 누수 방지를 위한 캐시 크기 제한
 
 export const getEquidistantArrows = (points, baseIntervalKm = 400) => {
   if (!points || points.length < 2) return [];
@@ -108,6 +109,11 @@ export const getEquidistantArrows = (points, baseIntervalKm = 400) => {
           bearing: bearing
         });
       }
+      // 캐시 크기 초과 시 가장 오래된 항목 제거 (LRU 방식)
+      if (arrowCache.size >= MAX_ARROW_CACHE_SIZE) {
+        const oldestKey = arrowCache.keys().next().value;
+        arrowCache.delete(oldestKey);
+      }
       arrowCache.set(cacheKey, arrowPoints);
       return arrowPoints;
     }
@@ -130,6 +136,11 @@ export const getEquidistantArrows = (points, baseIntervalKm = 400) => {
       currentDistance += adjustedInterval;
     }
     
+    // 캐시 크기 초과 시 가장 오래된 항목 제거 (LRU 방식)
+    if (arrowCache.size >= MAX_ARROW_CACHE_SIZE) {
+      const oldestKey = arrowCache.keys().next().value;
+      arrowCache.delete(oldestKey);
+    }
     arrowCache.set(cacheKey, arrowPoints);
     return arrowPoints;
   } catch (e) {

@@ -8,7 +8,7 @@ import { getOptimizedBounds } from './map/mapHelpers';
  * 우측 영역에 슬라이드 인 형태로 우아하게 노출하는 프리미엄 대시보드 컴포넌트입니다.
  * 좌측 가장자리에 밀착된 일체형 플로팅 세로 탭을 통해 상시 접고 펴기가 가능합니다.
  */
-const RotationTimeline = ({ selectedRoute, isOpen, onClose, onToggle }) => {
+const RotationTimeline = ({ selectedRoute, isOpen, onClose, onToggle, hoveredPortIndex, setHoveredPortIndex }) => {
   const [exporting, setExporting] = useState(false);
 
   const handleExportPDF = async () => {
@@ -292,8 +292,12 @@ const RotationTimeline = ({ selectedRoute, isOpen, onClose, onToggle }) => {
 
                 {/* 기항지 명칭 카드 */}
                 <div
+                  onMouseEnter={() => setHoveredPortIndex(idx)}
+                  onMouseLeave={() => setHoveredPortIndex(null)}
                   className={`p-3.5 rounded-xl border transition-all duration-300 ${
-                    isBusan
+                    idx === hoveredPortIndex
+                      ? 'border-cyan-500/80 bg-cyan-950/30 shadow-lg shadow-cyan-950/20 scale-[1.01]'
+                      : isBusan
                       ? 'bg-emerald-950/20 border-emerald-500/25 hover:border-emerald-500/40 shadow-md shadow-emerald-950/10'
                       : 'bg-slate-800/30 border-slate-800 hover:border-slate-700/50 hover:bg-slate-800/50'
                   }`}

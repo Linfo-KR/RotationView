@@ -13,6 +13,42 @@ from sqlalchemy.orm import Session
 from ..models import Port
 
 
+def get_port_candidates(db: Session, port_name: str) -> List[Tuple[float, float]]:
+    """항만명에 매칭되는 모든 가능한 좌표(lat, lng) 목록을 반환합니다.
+    동명 항구를 모두 대응하기 위한 함수입니다.
+    """
+    normalized_name = re.sub(r'\(.*?\)', '', port_name).strip().lower()
+    candidates = []
+
+    # 1차: 정확한 이름 매칭
+    ports = db.query(Port).filter(Port.port_name.ilike(normalized_name)).all()
+    for p in ports:
+        candidates.append((p.lat, p.lng))
+
+    # 2차: aliases(별칭) 매칭
+    ports_with_aliases = db.query(Port).filter(Port.aliases.isnot(None)).all()
+    for p in ports_with_aliases:
+        try:
+            aliases = p.aliases
+            if not isinstance(aliases, list):
+                aliases = json.loads(aliases) if isinstance(aliases, str) else []
+            if any(alias.lower() == normalized_name for alias in aliases):
+                candidates.append((p.lat, p.lng))
+        except (json.JSONDecodeError, TypeError):
+            continue
+
+    # 중복 후보 제거 (위경도가 거의 일치하는 경우 방지)
+    unique_candidates = []
+    seen = set()
+    for lat, lng in candidates:
+        key = (round(lat, 4), round(lng, 4))
+        if key not in seen:
+            seen.add(key)
+            unique_candidates.append((lat, lng))
+
+    return unique_candidates
+
+
 def get_port_coords(db: Session, port_name: str) -> Tuple[Optional[float], Optional[float]]:
     """항만명으로 좌표(lat, lng)를 조회합니다.
 
@@ -25,26 +61,11 @@ def get_port_coords(db: Session, port_name: str) -> Tuple[Optional[float], Optio
     Returns:
         (lat, lng) 튜플. 매칭 실패 시 (None, None)
     """
-    normalized_name = re.sub(r'\(.*?\)', '', port_name).strip().lower()
-
-    # 1차: 정확한 이름 매칭
-    port = db.query(Port).filter(Port.port_name.ilike(normalized_name)).first()
-    if port:
-        return port.lat, port.lng
-
-    # 2차: aliases(별칭) 매칭
-    ports_with_aliases = db.query(Port).filter(Port.aliases.isnot(None)).all()
-    for p in ports_with_aliases:
-        try:
-            aliases = p.aliases
-            if not isinstance(aliases, list):
-                aliases = json.loads(aliases) if isinstance(aliases, str) else []
-            if any(alias.lower() == normalized_name for alias in aliases):
-                return p.lat, p.lng
-        except (json.JSONDecodeError, TypeError):
-            continue
-
+    candidates = get_port_candidates(db, port_name)
+    if candidates:
+        return candidates[0]
     return None, None
+
 
 
 def parse_port_rotation(port_rotation: str) -> List[str]:

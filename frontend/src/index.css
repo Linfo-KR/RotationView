@@ -87,6 +87,105 @@ body {
   letter-spacing: -0.02em;
 }
 
+/* 포트 라벨 방향 클래스 정의 (겹침 방지) */
+.port-label.label-dir-bottom {
+  margin-top: 3px;
+}
+.port-label.label-dir-top {
+  position: absolute;
+  bottom: 12px;
+  left: 50%;
+  transform: translateX(-50%);
+  margin-top: 0;
+}
+.port-label.label-dir-right {
+  position: absolute;
+  left: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  margin-top: 0;
+}
+.port-label.label-dir-left {
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  margin-top: 0;
+  text-align: right;
+}
+.port-label.label-dir-top-right {
+  position: absolute;
+  left: 10px;
+  bottom: 8px;
+  margin-top: 0;
+}
+.port-label.label-dir-top-left {
+  position: absolute;
+  right: 10px;
+  bottom: 8px;
+  margin-top: 0;
+  text-align: right;
+}
+.port-label.label-dir-bottom-right {
+  position: absolute;
+  left: 10px;
+  top: 8px;
+  margin-top: 0;
+}
+.port-label.label-dir-bottom-left {
+  position: absolute;
+  right: 10px;
+  top: 8px;
+  margin-top: 0;
+  text-align: right;
+}
+
+/* 기항지 마커 호버링 상호작용 스타일 */
+.port-marker {
+  transition: transform 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+.port-marker.port-hovered {
+  transform: scale(1.35) translateY(-2px);
+  z-index: 99999 !important;
+}
+.port-marker.port-hovered .port-dot {
+  box-shadow: 0 0 12px rgba(0, 229, 255, 0.8), 0 0 4px rgba(0,0,0,0.4) !important;
+  border-color: #00e5ff !important;
+  background-color: #00e5ff !important;
+}
+.port-marker.port-hovered .port-label {
+  color: #00e5ff !important;
+  font-weight: 800 !important;
+  text-shadow:
+    -1px -1px 0 #000, 1px -1px 0 #000,
+    -1px 1px 0 #000, 1px 1px 0 #000,
+    0 0 8px rgba(0, 229, 255, 0.6) !important;
+}
+
+/* 항로 위 주요 구간 거리 표시 배지 스타일 */
+.segment-distance-badge {
+  color: white;
+  font-size: 8.5px;
+  font-weight: 800;
+  padding: 1.5px 4.5px;
+  border-radius: 4px;
+  white-space: nowrap;
+  text-align: center;
+  box-shadow: 0 1.5px 3.5px rgba(0, 0, 0, 0.45);
+  font-family: 'Outfit', 'Inter', monospace;
+  line-height: 1;
+  letter-spacing: -0.01em;
+  transform: scale(0.9);
+  opacity: 0.88;
+  transition: all 0.2s ease;
+  pointer-events: none;
+}
+.segment-distance-badge-icon:hover .segment-distance-badge {
+  transform: scale(1.05);
+  opacity: 1;
+  box-shadow: 0 2.5px 6px rgba(0, 0, 0, 0.55);
+}
+
 /* 부산 (Highlight) */
 .port-highlight .port-dot {
   background-color: var(--color-busan);
@@ -234,6 +333,18 @@ body {
   width: 24px;
   height: 4px;
   border-radius: 2px;
+}
+
+/* Inbound 범례: 맵 위 점선(dashArray) 렌더링과 시각적 동기화 */
+.route-legend .legend-line.ib-legend-line {
+  background: repeating-linear-gradient(
+    to right,
+    currentColor 0px,
+    currentColor 5px,
+    transparent 5px,
+    transparent 9px
+  );
+  background-color: transparent !important;
 }
 
 /* ═══════════════════════════════════════════

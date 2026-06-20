@@ -31,9 +31,9 @@ L.Marker.prototype.options.icon = DefaultIcon;
 
 const TILE_LAYERS = {
   light: {
-    url: 'https://{s}.basemaps.cartocdn.com/light_nolabels/{z}/{x}/{y}{r}.png',
-    attribution: '&copy; <a href="https://carto.com/">CARTO</a>',
-    bg: '#e3eaef',
+    url: 'https://{s}.basemaps.cartocdn.com/rastertiles/voyager_nolabels/{z}/{x}/{y}{r}.png',
+    attribution: '&copy; <a href="https://carto.com/">CARTO</a> &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+    bg: '#f4f6f8',
   },
   dark: {
     url: 'https://{s}.basemaps.cartocdn.com/dark_nolabels/{z}/{x}/{y}{r}.png',
@@ -74,12 +74,13 @@ const MapResizer = ({ isTimelineOpen }) => {
   return null;
 };
 
-const MapVisualizer = ({ selectedRoute, allPorts, isTimelineOpen, onRouteUpdated }) => {
+const MapVisualizer = ({ selectedRoute, allPorts, isTimelineOpen, onRouteUpdated, hoveredPortIndex, setHoveredPortIndex }) => {
   const [routePorts, setRoutePorts] = useState([]);
   const [unmatchedPorts, setUnmatchedPorts] = useState([]);
   const [matchStatus, setMatchStatus] = useState({ total: 0, matched: 0 });
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [theme, setTheme] = useState('light');
+  const [isSingleColor, setIsSingleColor] = useState(false);
 
   const lineGeometry = selectedRoute?.line_geometry || null;
   const tileConfig = TILE_LAYERS[theme];
@@ -148,6 +149,17 @@ const MapVisualizer = ({ selectedRoute, allPorts, isTimelineOpen, onRouteUpdated
     <div className="absolute inset-0 overflow-hidden">
       {/* ── 상단 컨트롤들 ── */}
       <div className="absolute top-3 right-4 z-[1000] flex items-center gap-2">
+        {/* PPTX 스타일 (단일 계열) 모드 토글 */}
+        <button
+          onClick={() => setIsSingleColor(!isSingleColor)}
+          className={`px-3 py-1.5 rounded-lg text-xs font-semibold shadow-lg border transition-all duration-300 backdrop-blur-sm ${
+            isSingleColor
+              ? (isDark ? 'bg-cyan-500/20 text-cyan-300 border-cyan-400/50 hover:bg-cyan-500/30' : 'bg-blue-50 text-blue-700 border-blue-200 hover:bg-blue-100')
+              : (isDark ? 'bg-gray-800/90 text-gray-400 border-gray-700 hover:bg-gray-700/90' : 'bg-white/90 text-gray-500 border-gray-200 hover:bg-gray-50/90')
+          }`}
+        >
+          📊 PPTX Style
+        </button>
         {/* 테마 전환 */}
         <button
           onClick={() => setTheme(theme === 'light' ? 'dark' : 'light')}
@@ -166,6 +178,7 @@ const MapVisualizer = ({ selectedRoute, allPorts, isTimelineOpen, onRouteUpdated
           <RouteLegend
             theme={theme}
             totalDistance={lineGeometry.total_distance_km || 0}
+            isSingleColor={isSingleColor}
           />
         </div>
       )}
@@ -215,7 +228,7 @@ const MapVisualizer = ({ selectedRoute, allPorts, isTimelineOpen, onRouteUpdated
       />
 
       <MapContainer
-        key={`map-${mapCenter[0].toFixed(1)}-${mapCenter[1].toFixed(1)}`}
+        key="main-map-container"
         center={mapCenter}
         zoom={3}
         minZoom={2}
@@ -241,9 +254,9 @@ const MapVisualizer = ({ selectedRoute, allPorts, isTimelineOpen, onRouteUpdated
           noWrap={false} // maxBounds로 가둔 상태에서 180도 우측 복제 영역 타일을 채우기 위해 켬
         />
 
-        <RouteLayer lineGeometry={lineGeometry} theme={theme} />
-        <PortMarkers routePorts={routePorts} />
-        <MapUpdater coordinates={lineGeometry} />
+        <RouteLayer lineGeometry={lineGeometry} theme={theme} isSingleColor={isSingleColor} />
+        <PortMarkers routePorts={routePorts} hoveredPortIndex={hoveredPortIndex} setHoveredPortIndex={setHoveredPortIndex} />
+        <MapUpdater coordinates={lineGeometry} center={mapCenter} />
         <FitBoundsControl coordinates={lineGeometry} />
       </MapContainer>
     </div>

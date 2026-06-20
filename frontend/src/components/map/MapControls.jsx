@@ -6,7 +6,7 @@ import { getOptimizedBounds } from './mapHelpers';
 /**
  * 항만 마커 아이콘을 생성합니다.
  */
-const createPortIcon = (portName, index, total) => {
+const createPortIcon = (portName, index, total, labelDir = 'bottom', isHovered = false) => {
   const name = portName || '';
   const isBusan = name.toLowerCase().includes('busan');
   const isStart = index === 0;
@@ -40,12 +40,18 @@ const createPortIcon = (portName, index, total) => {
     markerClass = 'port-start-end';
   }
 
+  if (isHovered) {
+    markerClass += ' port-hovered';
+  }
+
+  const dirClass = `label-dir-${labelDir}`;
+
   return L.divIcon({
     className: 'custom-div-icon',
     html: `
       <div class="port-marker ${markerClass}">
         ${dotHtml}
-        <div class="port-label">${name}</div>
+        <div class="port-label ${dirClass}">${name}</div>
         ${index !== undefined ? `<div class="seq-badge">${index + 1}</div>` : ''}
       </div>
     `,
@@ -56,27 +62,168 @@ const createPortIcon = (portName, index, total) => {
 
 /**
  * 기항지 마커를 렌더링하는 컴포넌트.
+ * 실시간 픽셀 좌표 충돌 검사를 통해 라벨을 8방향으로 스마트 재배치합니다.
  */
-const PortMarkers = ({ routePorts }) => {
+import { useState } from 'react';
+
+const PortMarkers = ({ routePorts, hoveredPortIndex, setHoveredPortIndex }) => {
+  const map = useMap();
+  const [directions, setDirections] = useState({});
+  const [zoom, setZoom] = useState(map.getZoom());
+
+  useEffect(() => {
+    const handleMapChange = () => {
+      setZoom(map.getZoom());
+    };
+    map.on('zoomend moveend', handleMapChange);
+    return () => {
+      map.off('zoomend moveend', handleMapChange);
+    };
+  }, [map]);
+
+  useEffect(() => {
+    if (routePorts.length === 0) return;
+
+    const visiblePorts = routePorts.map((port, idx) => {
+      const name = port.port_name || '';
+      const isBusan = name.toLowerCase().includes('busan');
+      const isStart = idx === 0;
+      const isEnd = idx === routePorts.length - 1;
+      const isChokepoint = 
+        name.toLowerCase().includes('panama') ||
+        name.toLowerCase().includes('suez') ||
+        name.toLowerCase().includes('gibraltar') ||
+        name.toLowerCase().includes('malacca') ||
+        name.toLowerCase().includes('singapore');
+
+      const isImportant = isBusan || isStart || isEnd || isChokepoint;
+      const isVisible = zoom >= 3 || isImportant;
+
+      let pixel = { x: 0, y: 0 };
+      try {
+        pixel = map.latLngToContainerPoint([port.lat, port.lng]);
+      } catch (e) {
+        // map context 에러 방지
+      }
+
+      return {
+        ...port,
+        idx,
+        isImportant,
+        isVisible,
+        pixel,
+      };
+    }).filter(p => p.isVisible);
+
+    // 중요 포트 우선순위 부여
+    visiblePorts.sort((a, b) => {
+      if (a.isImportant && !b.isImportant) return -1;
+      if (!a.isImportant && b.isImportant) return 1;
+      return a.idx - b.idx;
+    });
+
+    const newDirections = {};
+    const placedBoxes = [];
+
+    const getLabelBounds = (x, y, text, dir) => {
+      const textLen = text ? text.length : 10;
+      const w = textLen * 6.0 + 8;
+      const h = 14;
+      
+      switch (dir) {
+        case 'top':
+          return { x1: x - w / 2, y1: y - 22, x2: x + w / 2, y2: y - 8 };
+        case 'right':
+          return { x1: x + 12, y1: y - h / 2, x2: x + 12 + w, y2: y + h / 2 };
+        case 'left':
+          return { x1: x - 12 - w, y1: y - h / 2, x2: x - 12, y2: y + h / 2 };
+        case 'top-right':
+          return { x1: x + 10, y1: y - 18, x2: x + 10 + w, y2: y - 4 };
+        case 'top-left':
+          return { x1: x - 10 - w, y1: y - 18, x2: x - 10, y2: y - 4 };
+        case 'bottom-right':
+          return { x1: x + 10, y1: y + 8, x2: x + 10 + w, y2: y + 22 };
+        case 'bottom-left':
+          return { x1: x - 10 - w, y1: y + 8, x2: x - 10, y2: y + 22 };
+        case 'bottom':
+        default:
+          return { x1: x - w / 2, y1: y + 6, x2: x + w / 2, y2: y + 20 };
+      }
+    };
+
+    const intersects = (box1, box2) => {
+      return !(box1.x2 < box2.x1 || box1.x1 > box2.x2 || box1.y2 < box2.y1 || box1.y1 > box2.y2);
+    };
+
+    visiblePorts.forEach((port) => {
+      const x = port.pixel.x;
+      const y = port.pixel.y;
+      const text = port.port_name;
+
+      const candidates = ['bottom', 'top', 'right', 'left', 'top-right', 'top-left', 'bottom-right', 'bottom-left'];
+      let bestDir = 'bottom';
+      let minOverlapArea = Infinity;
+
+      for (const dir of candidates) {
+        const box = getLabelBounds(x, y, text, dir);
+        let overlapArea = 0;
+
+        for (const placed of placedBoxes) {
+          if (intersects(box, placed)) {
+            const ix1 = Math.max(box.x1, placed.x1);
+            const iy1 = Math.max(box.y1, placed.y1);
+            const ix2 = Math.min(box.x2, placed.x2);
+            const iy2 = Math.min(box.y2, placed.y2);
+            overlapArea += (ix2 - ix1) * (iy2 - iy1);
+          }
+        }
+
+        if (overlapArea === 0) {
+          bestDir = dir;
+          break;
+        }
+
+        if (overlapArea < minOverlapArea) {
+          minOverlapArea = overlapArea;
+          bestDir = dir;
+        }
+      }
+
+      newDirections[port.port_code + '-' + port.idx] = bestDir;
+      const finalBox = getLabelBounds(x, y, text, bestDir);
+      placedBoxes.push(finalBox);
+    });
+
+    setDirections(newDirections);
+  }, [routePorts, zoom, map]);
+
   return (
     <>
-      {routePorts.map((port, idx) => (
-        <Marker
-          key={`${port.port_code}-${idx}`}
-          position={L.latLng(port.lat, port.lng, true)}
-          icon={createPortIcon(port.port_name, idx, routePorts.length)}
-        >
-          <Popup>
-            <div className="text-center min-w-[120px]">
-              <h3 className="font-bold text-base text-[#002060]">{port.port_name}</h3>
-              <div className="text-xs text-gray-500">{port.nation_name}</div>
-              <div className="mt-1 text-xs bg-gray-100 rounded px-1 py-0.5 inline-block">
-                Seq: {idx + 1}
+      {routePorts.map((port, idx) => {
+        const dir = directions[port.port_code + '-' + idx] || 'bottom';
+        const isHovered = idx === hoveredPortIndex;
+        return (
+          <Marker
+            key={`${port.port_code}-${idx}`}
+            position={L.latLng(port.lat, port.lng, true)}
+            icon={createPortIcon(port.port_name, idx, routePorts.length, dir, isHovered)}
+            eventHandlers={{
+              mouseover: () => setHoveredPortIndex(idx),
+              mouseout: () => setHoveredPortIndex(null),
+            }}
+          >
+            <Popup>
+              <div className="text-center min-w-[120px]">
+                <h3 className="font-bold text-base text-[#002060]">{port.port_name}</h3>
+                <div className="text-xs text-gray-500">{port.nation_name}</div>
+                <div className="mt-1 text-xs bg-gray-100 rounded px-1 py-0.5 inline-block">
+                  Seq: {idx + 1}
+                </div>
               </div>
-            </div>
-          </Popup>
-        </Marker>
-      ))}
+            </Popup>
+          </Marker>
+        );
+      })}
     </>
   );
 };
@@ -102,7 +249,7 @@ const ZoomHandler = () => {
 /**
  * MapUpdater: 경로 좌표에 맞게 지도 범위를 자동 조정합니다.
  */
-const MapUpdater = ({ coordinates }) => {
+const MapUpdater = ({ coordinates, center }) => {
   const map = useMap();
   
   useEffect(() => {
@@ -113,7 +260,12 @@ const MapUpdater = ({ coordinates }) => {
   }, [map]);
 
   useEffect(() => {
-    if (!coordinates) return;
+    if (!coordinates) {
+      if (center) {
+        map.setView(center, map.getZoom() || 3);
+      }
+      return;
+    }
     try {
       let allPoints = [];
       if (Array.isArray(coordinates)) {
@@ -134,7 +286,7 @@ const MapUpdater = ({ coordinates }) => {
     } catch (e) {
       console.warn('Invalid bounds', e);
     }
-  }, [coordinates, map]);
+  }, [coordinates, center, map]);
   return null;
 };
 

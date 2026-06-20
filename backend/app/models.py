@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, String, Float, ForeignKey, DateTime, Text, Numeric
+from sqlalchemy import Column, Integer, String, Float, ForeignKey, DateTime, Text, Numeric, Boolean
 from sqlalchemy.orm import relationship
 from sqlalchemy.sql import func
 from sqlalchemy.types import JSON
@@ -72,3 +72,34 @@ class Proforma(Base):
 
     # Relationships
     route = relationship("Route", back_populates="proforma")
+
+
+class RouteNode(Base):
+    """
+    해상 경로 노드 테이블
+    Schema: TB_ROUTE_NODE
+    """
+    __tablename__ = "TB_ROUTE_NODE"
+
+    node_id = Column(Integer, primary_key=True, index=True, autoincrement=True, comment="노드 ID (PK)")
+    node_name = Column(String, nullable=True, comment="노드 이름")
+    lat = Column(Float, nullable=False, comment="위도")
+    lng = Column(Float, nullable=False, comment="경도")
+    is_port = Column(Boolean, default=False, comment="항만 여부")
+
+
+class RouteLink(Base):
+    """
+    해상 경로 링크 테이블
+    Schema: TB_ROUTE_LINK
+    """
+    __tablename__ = "TB_ROUTE_LINK"
+
+    link_id = Column(Integer, primary_key=True, index=True, autoincrement=True, comment="링크 ID (PK)")
+    source_node = Column(Integer, ForeignKey("TB_ROUTE_NODE.node_id"), nullable=False, comment="출발 노드 (FK)")
+    target_node = Column(Integer, ForeignKey("TB_ROUTE_NODE.node_id"), nullable=False, comment="도착 노드 (FK)")
+    distance_km = Column(Float, nullable=False, comment="구간 거리 (km)")
+    is_active = Column(Boolean, default=True, comment="활성화 여부 (통행 제약 제어용)")
+    weight_modifier = Column(Float, default=1.0, comment="가중치 변경값")
+    path_coords = Column(JSON, nullable=True, comment="실제 선형 좌표 리스트 [[lat, lng], ...] (JSON)")
+

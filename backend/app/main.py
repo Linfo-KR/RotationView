@@ -14,10 +14,20 @@ from .database import engine, SessionLocal
 from . import models
 from .routers import routes, ports
 from .services.geometry import get_or_compute_geometry, _hash_rotation, calculate_route_geometry, save_geometry_cache
+from .services.bootstrap import bootstrap_routing_data
 from concurrent.futures import ThreadPoolExecutor
 
 # DB 테이블 생성 (서버 시작 시 자동 생성)
 models.Base.metadata.create_all(bind=engine)
+
+# 라우팅 네트워크 데이터 부트스트랩 실행
+db = SessionLocal()
+try:
+    bootstrap_routing_data(db)
+except Exception as e:
+    print(f"[Startup] Bootstrap routing data failed: {e}")
+finally:
+    db.close()
 
 # 캐싱 테이블 생성 (ORM 미사용, DDL 직접 실행)
 with engine.connect() as conn:

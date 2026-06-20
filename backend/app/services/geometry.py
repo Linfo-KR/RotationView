@@ -1,18 +1,19 @@
 """경로 지오메트리 계산 서비스.
 
 searoute 라이브러리를 활용한 해상 경로 계산, 날짜변경선 분리,
-Outbound/Inbound 분리, Offset 적용, 화살표 중간점 추출 등의 핵심 비즈니스 로직을 담당합니다.
+Outbound/Inbound 분리, Offset 적용 등의 핵심 비즈니스 로직을 담당합니다.
 """
 import hashlib
 import json
+import logging
 import math
 from typing import Dict, List, Any, Optional, Tuple
 
-import searoute as sr
 from sqlalchemy.orm import Session
 from sqlalchemy import text
+from .routing_service import find_shortest_path
 
-from .port_matcher import get_port_coords, parse_port_rotation
+from .port_matcher import get_port_coords, parse_port_rotation, get_port_candidates
 from ..utils.geo import (
     haversine,
     normalize_lng,
@@ -24,10 +25,18 @@ from ..utils.geo import (
 )
 
 
+logger = logging.getLogger(__name__)
+
+
 def generate_great_circle_arc(
     origin: List[float], dest: List[float], num_points: int = 15
 ) -> List[List[float]]:
     """두 지점 간 최단 경로 방향으로 부드럽게 휜 구면 아치(Great Circle-like Arc) 좌표 목록을 생성합니다.
+
+    아치 높이는 구간 거리에 비례하여 동적으로 계산됩니다.
+    - 7,500km 이상: 최대 14도
+    - 4,000km 수준: 약 8도
+    - 그 이하: 최소 5도
 
     Args:
         origin (List[float]): 시작 좌표 [lng, lat]
@@ -49,6 +58,12 @@ def generate_great_circle_arc(
         lng2 += 360
         diff = lng2 - lng1
 
+    # 구간 직선 거리 계산 (동적 아치 높이 결정용)
+    direct_dist = haversine(lng1, lat1, lng2, lat2)
+
+    # 거리에 비례하는 동적 아치 높이 (최소 5도, 최대 14도)
+    arc_height = max(5.0, min(14.0, direct_dist / 550.0))
+
     arc_coords = []
     for idx in range(num_points):
         t = idx / (num_points - 1)
@@ -56,11 +71,10 @@ def generate_great_circle_arc(
         lat = lat1 + t * (lat2 - lat1)
 
         # 북/남반구 위상에 따라 둥글게 휘는 아치 오프셋 적용
-        # 중간 영역으로 갈수록 최대 14도 시프트
         mid_lat = (lat1 + lat2) / 2.0
         shift_direction = 1.0 if mid_lat >= -10.0 else -1.0
-        # sin 곡선 오프셋 적용
-        arc_offset = 14.0 * math.sin(t * math.pi) * shift_direction
+        # sin 곡선 오프셋 적용 (거리 비례 동적 높이)
+        arc_offset = arc_height * math.sin(t * math.pi) * shift_direction
 
         lat = min(75.0, max(-65.0, lat + arc_offset))
         arc_coords.append([lng, lat])
@@ -159,13 +173,13 @@ def _get_chokepoint_waypoints(lng1: float, lat1: float, lng2: float, lat2: float
     elif (r1 == "SOUTH_AMERICA_WEST" or r1 == "NORTH_AMERICA_WEST") and r2 == "ASIA":
         waypoints = [[180.0, 15.0]]
 
-    # 8. AMERICA_EAST <-> EUROPE_MED (미주 동안 <-> 유럽/지중해 - 지브롤터 필수 통과)
+    # 8. AMERICA_EAST <-> EUROPE_MED (미주 동안 <-> 유럽/지중해 - 지브롤터 해협 통과)
     elif r1 in ("NORTH_AMERICA_EAST", "SOUTH_AMERICA_EAST") and r2 == "EUROPE_MED":
         waypoints = [[-5.6, 35.9]]
     elif r1 == "EUROPE_MED" and r2 in ("NORTH_AMERICA_EAST", "SOUTH_AMERICA_EAST"):
         waypoints = [[-5.6, 35.9]]
 
-    # 9. AMERICA_EAST <-> AMERICA_WEST (미주 동안 <-> 미주 서안 - 파나마 운하 필수 통과)
+    # 9. AMERICA_EAST <-> AMERICA_WEST (미주 동안 <-> 미주 서안 - 파나마 운하 해협 통과)
     elif r1 in ("NORTH_AMERICA_EAST", "SOUTH_AMERICA_EAST") and r2 in ("NORTH_AMERICA_WEST", "SOUTH_AMERICA_WEST"):
         waypoints = [[-79.9, 9.3]]
     elif r1 in ("NORTH_AMERICA_WEST", "SOUTH_AMERICA_WEST") and r2 in ("NORTH_AMERICA_EAST", "SOUTH_AMERICA_EAST"):
@@ -177,8 +191,7 @@ def _get_chokepoint_waypoints(lng1: float, lat1: float, lng2: float, lat2: float
 def split_polyline_at_antimeridian(
     simplified_path: List[List[float]],
 ) -> List[List[List[float]]]:
-    """[스플릿 로직 제거] 프론트엔드가 곡선 피팅 후 렌더링하기 직전에 쪼갤 수 있도록 
-
+    """프론트엔드에서 곡선 렌더링하기 직전에 쪼갤 수 있도록
     백엔드에서는 쪼개지 않고 단일 세그먼트로 감싸 반환합니다.
     """
     if not simplified_path:
@@ -187,15 +200,21 @@ def split_polyline_at_antimeridian(
 
 
 def _build_divided_unwrapped_lines(
-    coords_list: list, turn_idx: int
-) -> Tuple[List[List[float]], List[List[float]]]:
+    db: Session,
+    coords_list: list,
+    turn_idx: int,
+    apply_offset: bool = True,
+    offset_km: float = 60.0,
+) -> Tuple[List[List[float]], List[List[float]], List[float], List[List[float]]]:
     """노선의 전체 기항지 목록을 기점(첫 항구) 기준 하나의 누적 척도로 
 
-    순차 언래핑(Sequential Unwrapping)을 수행하여, Outbound와 Inbound 간의 
-    경도 스케일 불일치(찢어짐)를 원천 차단하고 분할하여 반환합니다.
+    순차 언래핑(Sequential Unwrapping) 및 복수 기항 오프셋을 처리하여 
+    분할된 Outbound/Inbound 경로와 개별 구간 거리 및 중간 좌표 목록을 반환합니다.
     """
     outbound_raw = []
     inbound_raw = []
+    segment_distances = []
+    segment_midpoints = []
 
     # 전체 언래핑 궤적을 순차적으로 담을 버퍼
     full_unwrapped_path = []
@@ -203,12 +222,20 @@ def _build_divided_unwrapped_lines(
     # 각 기항지 구간(Leg)별로 계산된 좌표 조각들을 임시 저장
     segments_data = []
 
+    # 중복 구간 오프셋 계산을 위한 방문 횟수 관리 맵
+    segment_visit_counts = {}
+
     for i in range(len(coords_list) - 1):
         origin = coords_list[i]
         dest = coords_list[i + 1]
 
         lng1, lat1 = origin
         lng2, lat2 = dest
+
+        # 복수 기항 구간 식별을 위한 키 (순서 무관하게 정렬된 위경도 튜플)
+        seg_key = tuple(sorted([(round(lng1, 3), round(lat1, 3)), (round(lng2, 3), round(lat2, 3))]))
+        visit_count = segment_visit_counts.get(seg_key, 0)
+        segment_visit_counts[seg_key] = visit_count + 1
 
         # 자동 Chokepoints 주입 분석
         chokepoints = _get_chokepoint_waypoints(lng1, lat1, lng2, lat2)
@@ -222,67 +249,64 @@ def _build_divided_unwrapped_lines(
         sub_segments.append((curr, dest))
 
         segment_coords_all = []
+        leg_dist = 0.0
+
         for start, end in sub_segments:
             direct_dist = haversine(start[0], start[1], end[0], end[1])
 
-            # 4,500km 이상의 대양 횡단 구간은 searoute 연산을 완전히 스킵하고 100% 대원 아치 곡선으로 직접 강제 생성 (다익스트라 실패 방지)
-            if direct_dist > 4500.0:
+            # 7,500km 이상의 대양 횡단 구간은 자체 다익스트라 대신 100% 대원 아치 곡선으로 직접 강제 생성 (다익스트라 실패 방지)
+            if direct_dist > 7500.0:
                 arc_points = generate_great_circle_arc(start, end)
                 for lat, lng in arc_points:
                     segment_coords_all.append([lat, lng])
+                leg_dist += direct_dist
                 continue
 
             try:
-                segment_geom = sr.searoute(start, end, append_orig_dest=True)
-                if not segment_geom:
-                    # searoute 실패 시 대원 아치 곡선으로 fallback
-                    arc_points = generate_great_circle_arc(start, end)
-                    for lat, lng in arc_points:
-                        segment_coords_all.append([lat, lng])
-                    continue
-
-                geom = segment_geom.get('geometry') or (
-                    segment_geom.get('features', [{}])[0].get('geometry')
-                    if segment_geom.get('features') else None
-                )
-                if not geom:
-                    continue
-
-                segment_coords = []
-                if geom['type'] == 'LineString':
-                    segment_coords = geom['coordinates']
-                elif geom['type'] == 'MultiLineString':
-                    for line in geom['coordinates']:
-                        segment_coords.extend(line)
-
-                # searoute 결과 궤적의 누적 해상 거리 계산
-                route_dist = 0.0
-                if len(segment_coords) >= 2:
-                    for idx in range(len(segment_coords) - 1):
-                        route_dist += haversine(
-                            segment_coords[idx][0], segment_coords[idx][1],
-                            segment_coords[idx + 1][0], segment_coords[idx + 1][1]
-                        )
-
-                # 오차 보정 판별 조건:
-                # - searoute 최단 경로 거리가 실제 최단 구면 거리보다 1.4배 이상 긴 경우 (방향 거꾸로 돎)
-                is_wrong_dir = (direct_dist > 2000.0 and route_dist > direct_dist * 1.4)
-
-                if is_wrong_dir:
-                    arc_points = generate_great_circle_arc(start, end)
-                    for lat, lng in arc_points:
-                        segment_coords_all.append([lat, lng])
-                else:
-                    # 정상적인 해상 궤적 삽입 (c[1]=lat, c[0]=lng)
-                    for c in segment_coords:
-                        segment_coords_all.append([c[1], c[0]])
-            except Exception:
-                # 실패 시 대원 아치 곡선으로 fallback
+                # DB 노드/링크 기반 자체 다익스트라 최단 경로 계산
+                route_coords, route_dist = find_shortest_path(db, start, end)
+                segment_coords_all.extend(route_coords)
+                leg_dist += route_dist
+            except Exception as e:
+                # 실패 시 대원 아치 곡선으로 fallback (로깅 포함)
+                logger.warning("자체 라우팅 계산 실패 (구간: %s -> %s): %s", start, end, e)
                 arc_points = generate_great_circle_arc(start, end)
                 for lat, lng in arc_points:
                     segment_coords_all.append([lat, lng])
+                leg_dist += direct_dist
+
+        # 🌟 지능형 개별 오프셋(Adaptive Leg Offset) 및 복수 기항 오프셋 적용
+        # Outbound와 Inbound, 그리고 중복 방문 순번에 맞춰 평행 이격 처리를 수행합니다.
+        avg_lat = (lat1 + lat2) / 2.0
+        lat_factor = math.cos(math.radians(avg_lat))
+        
+        # 중복 방문 횟수에 비례하여 오프셋 거리를 점진적으로 확장하여 겹침 방지 (1배 -> 1.45배 -> 1.9배)
+        adjusted_offset_km = offset_km * (1.0 + 0.45 * visit_count)
+
+        if leg_dist < 3000.0:
+            adjusted_offset_km = min(adjusted_offset_km, 18.0) * max(0.5, lat_factor)
+        else:
+            adjusted_offset_km = adjusted_offset_km * max(0.6, lat_factor)
+
+        # Outbound는 우측(+), Inbound는 좌측(-) 방향 이격
+        direction = 1.0 if i < turn_idx else -1.0
+        offset_val = adjusted_offset_km * direction
+
+        if apply_offset and len(segment_coords_all) >= 2:
+            # offset_polyline은 [[lng, lat], ...] 포맷 수신
+            lng_lat_line = [[c[1], c[0]] for c in segment_coords_all]
+            off_line = offset_polyline(lng_lat_line, offset_val, port_coords=[origin, dest])
+            segment_coords_all = [[c[1], c[0]] for c in off_line]
+
+        # 오프셋 및 병합 완료된 선형 상의 정중앙 미드포인트 추출
+        if segment_coords_all:
+            mid_idx = len(segment_coords_all) // 2
+            segment_midpoints.append(segment_coords_all[mid_idx])
+        else:
+            segment_midpoints.append([avg_lat, (lng1 + lng2) / 2.0])
 
         segments_data.append(segment_coords_all)
+        segment_distances.append(leg_dist)
 
     # 수집된 모든 세그먼트 좌표 조각들을 단 하나의 기준에서 순차 언래핑 병합
     for i, seg in enumerate(segments_data):
@@ -307,72 +331,89 @@ def _build_divided_unwrapped_lines(
         else:
             inbound_raw.extend(seg_unwrapped)
 
-    return outbound_raw, inbound_raw
+    return outbound_raw, inbound_raw, segment_distances, segment_midpoints
 
 
-def _extract_arrow_points(coord_slice: list) -> list:
-    """각 기항지 간 구간(Leg)의 중간점 좌표와 방위각을 추출합니다."""
-    arrows = []
-    for i in range(len(coord_slice) - 1):
-        origin = coord_slice[i]
-        dest = coord_slice[i + 1]
-        try:
-            segment_geom = sr.searoute(origin, dest, append_orig_dest=True)
-            if not segment_geom:
-                continue
-
-            geom = segment_geom.get('geometry') or (
-                segment_geom.get('features', [{}])[0].get('geometry')
-                if segment_geom.get('features') else None
-            )
-            if not geom:
-                continue
-
-            coords = []
-            if geom['type'] == 'LineString':
-                coords = geom['coordinates']
-            elif geom['type'] == 'MultiLineString':
-                for line in geom['coordinates']:
-                    coords.extend(line)
-
-            if len(coords) >= 2:
-                mid_idx = len(coords) // 2
-                mid_point = coords[mid_idx]
-                next_idx = min(mid_idx + 1, len(coords) - 1)
-                bearing = calc_bearing(coords[mid_idx], coords[next_idx])
-                arrows.append({
-                    "lat": mid_point[1],
-                    "lng": normalize_lng(mid_point[0]),
-                    "bearing": bearing,
-                })
-        except Exception:
-            pass
-
-    return arrows
+# NOTE: _extract_arrow_points() 함수는 제거되었습니다.
+# 프론트엔드(RouteLayer.jsx)에서 Turf.js 기반으로 줌 레벨에 따라
+# 등간격 화살표를 실시간 생성하므로, 백엔드에서의 중복 searoute 호출은 불필요합니다.
+# 이 변경으로 노선당 searoute 호출 횟수가 절반으로 감소합니다.
 
 
-def calculate_route_geometry(
-    db: Session,
-    port_rotation: str,
-    apply_offset: bool = True,
-    offset_km: float = 60.0,
-) -> Dict[str, Any]:
-    """해상 노선의 전체 지오메트리를 계산합니다."""
-    port_names = parse_port_rotation(port_rotation)
+def _match_port_coordinates(db: Session, port_names: List[str]) -> List[List[float]]:
+    """항구 목록에 대응하는 [lng, lat] 좌표 목록을 DB 조회를 통해 최적으로 매칭합니다.
 
+    동명 항구가 있을 경우, 인접한 항구와의 거리를 최소화하는 기점 매칭 및
+    역방향 보정 패스를 순차 적용합니다.
+
+    Args:
+        db (Session): DB 세션 객체
+        port_names (List[str]): 항구 이름 리스트
+
+    Returns:
+        List[List[float]]: 최종 실존 항구들의 [lng, lat] 좌표 리스트
+    """
     coords_list = []
+    candidates_by_index = []
+
     for name in port_names:
-        lat, lng = get_port_coords(db, name)
-        if lat is not None and lng is not None:
-            coords_list.append([lng, lat])
+        candidates = get_port_candidates(db, name)
+        candidates_by_index.append(candidates)
 
-    if len(coords_list) < 2:
-        return {
-            "outbound": [], "inbound": [],
-            "outbound_arrows": [], "inbound_arrows": [],
-            "total_distance_km": 0,
-        }
+        if not candidates:
+            coords_list.append(None)
+            continue
 
+        if len(candidates) == 1:
+            coords_list.append([candidates[0][1], candidates[0][0]])
+        else:
+            prev_active = None
+            for prev_coord in reversed(coords_list):
+                if prev_coord is not None:
+                    prev_active = prev_coord
+                    break
+
+            if prev_active:
+                best_candidate = min(
+                    candidates,
+                    key=lambda c: haversine(prev_active[0], prev_active[1], c[1], c[0])
+                )
+                coords_list.append([best_candidate[1], best_candidate[0]])
+            else:
+                coords_list.append([candidates[0][1], candidates[0][0]])
+
+    for i in range(len(coords_list) - 2, -1, -1):
+        candidates = candidates_by_index[i]
+        if not candidates or len(candidates) <= 1:
+            continue
+
+        next_active = None
+        for next_idx in range(i + 1, len(coords_list)):
+            if coords_list[next_idx] is not None:
+                next_active = coords_list[next_idx]
+                break
+
+        if next_active:
+            best_candidate = min(
+                candidates,
+                key=lambda c: haversine(next_active[0], next_active[1], c[1], c[0])
+            )
+            coords_list[i] = [best_candidate[1], best_candidate[0]]
+
+    return [c for c in coords_list if c is not None]
+
+
+def _find_turn_index(coords_list: List[List[float]]) -> int:
+    """시작 항구에서 가장 멀리 있는 항구(회차점)의 인덱스를 계산합니다.
+
+    Args:
+        coords_list (List[List[float]]): 항구 좌표 목록
+
+    Returns:
+        int: 회차점 기항지 인덱스
+    """
+    if not coords_list:
+        return 0
     start_lon, start_lat = coords_list[0]
     max_dist = -1
     turn_idx = 0
@@ -384,16 +425,16 @@ def calculate_route_geometry(
 
     if turn_idx == 0:
         turn_idx = len(coords_list) // 2
+    return turn_idx
 
-    outbound_slice = coords_list[: turn_idx + 1]
-    inbound_slice = coords_list[turn_idx:]
 
-    # A. 전체 궤적에 대해 통짜 순차 언래핑을 적용하고 분리
-    outbound_raw, inbound_raw = _build_divided_unwrapped_lines(coords_list, turn_idx)
+def _apply_global_lng_shift(outbound_raw: List[List[float]], inbound_raw: List[List[float]]) -> None:
+    """경로의 첫 시작점을 태평양 중심 뷰포트 내에 고정시키기 위한 글로벌 경도 평행이동을 적용합니다.
 
-    # 🌟 글로벌 경도 평행이동 보정 (Global Longitude Shift) 적용
-    # 경로의 첫 시작점을 [-180, 180] 범위 내에 강제 안착시키고, 
-    # 나머지 연속된 좌표들도 그 기점에 맞춰 메인 지도 뷰포트 내에 고정되게 함.
+    Args:
+        outbound_raw (List[List[float]]): Outbound 경로 좌표 리스트
+        inbound_raw (List[List[float]]): Inbound 경로 좌표 리스트
+    """
     ref_lng = None
     if outbound_raw:
         ref_lng = outbound_raw[0][1]
@@ -403,8 +444,7 @@ def calculate_route_geometry(
     if ref_lng is not None:
         ref_lng_norm = normalize_lng_pacific(ref_lng)
         shift_offset = ref_lng_norm - ref_lng
-        
-        # outbound 및 inbound 전체 좌표 시프트 적용
+
         if outbound_raw:
             for pt in outbound_raw:
                 pt[1] += shift_offset
@@ -412,39 +452,68 @@ def calculate_route_geometry(
             for pt in inbound_raw:
                 pt[1] += shift_offset
 
-    # 총 노선 거리(단거리 피더 여부 판단 및 성능 최적화용) 계산
-    total_distance = 0.0
-    for i in range(len(coords_list) - 1):
-        total_distance += haversine(
-            coords_list[i][0], coords_list[i][1],
-            coords_list[i + 1][0], coords_list[i + 1][1]
-        )
 
-    # 지능형 오프셋(Adaptive Offsetting): 위도별 메르카토르 왜곡 보정 및 노선 거리 비례 가변 오프셋 적용
+def _apply_adaptive_offset(
+    outbound_raw: List[List[float]],
+    inbound_raw: List[List[float]],
+    coords_list: List[List[float]],
+    total_distance: float,
+    offset_km: float,
+    apply_offset: bool,
+) -> Tuple[List[List[float]], List[List[float]]]:
+    """위도별 메르카토르 왜곡 보정 및 노선 거리 비례 가변 오프셋(Adaptive Offset)을 적용합니다.
+
+    Args:
+        outbound_raw (List[List[float]]): Outbound 경로 좌표 리스트
+        inbound_raw (List[List[float]]): Inbound 경로 좌표 리스트
+        coords_list (List[List[float]]): 항구 좌표 목록
+        total_distance (float): 총 노선 거리 (km)
+        offset_km (float): 기본 오프셋 거리 (km)
+        apply_offset (bool): 오프셋 적용 여부
+
+    Returns:
+        Tuple[List[List[float]], List[List[float]]]: 오프셋이 적용된 [outbound_raw, inbound_raw]
+    """
+    if not apply_offset:
+        return outbound_raw, inbound_raw
+
     avg_lat = sum(c[0] for c in coords_list) / len(coords_list) if coords_list else 0.0
     lat_factor = math.cos(math.radians(avg_lat))
     adjusted_offset_km = offset_km
-    
+
     if total_distance < 3000.0:
-        # 단거리 로컬 피더는 고위도(한중일 등)에서 육지 침범을 방지하고자 폭을 더 축소
         adjusted_offset_km = min(offset_km, 18.0) * max(0.5, lat_factor)
     else:
-        # 대양 노선도 극지방/고위도 진입 시 오프셋을 유동적으로 축소해 지형 관통 예방
         adjusted_offset_km = offset_km * max(0.6, lat_factor)
 
-    # B. 언래핑 및 쉬프트가 완벽히 완료된 상태에서 꼬임 없이 오프셋 평행선을 연산
-    if apply_offset:
-        if outbound_raw:
-            lng_lat_line = [[c[1], c[0]] for c in outbound_raw]
-            off_line = offset_polyline(lng_lat_line, adjusted_offset_km, port_coords=coords_list)
-            outbound_raw = [[c[1], c[0]] for c in off_line]
+    if outbound_raw:
+        lng_lat_line = [[c[1], c[0]] for c in outbound_raw]
+        off_line = offset_polyline(lng_lat_line, adjusted_offset_km, port_coords=coords_list)
+        outbound_raw = [[c[1], c[0]] for c in off_line]
 
-        if inbound_raw:
-            lng_lat_line = [[c[1], c[0]] for c in inbound_raw]
-            off_line = offset_polyline(lng_lat_line, -adjusted_offset_km, port_coords=coords_list)
-            inbound_raw = [[c[1], c[0]] for c in off_line]
+    if inbound_raw:
+        lng_lat_line = [[c[1], c[0]] for c in inbound_raw]
+        off_line = offset_polyline(lng_lat_line, -adjusted_offset_km, port_coords=coords_list)
+        inbound_raw = [[c[1], c[0]] for c in off_line]
 
-    # C. 오프셋이 완벽하게 끝난 선에 대해 RDP 단순화 수행 (로컬 피더는 곡선 보존을 위해 epsilon 축소)
+    return outbound_raw, inbound_raw
+
+
+def _simplify_route_lines(
+    outbound_raw: List[List[float]],
+    inbound_raw: List[List[float]],
+    total_distance: float,
+) -> Tuple[List[List[float]], List[List[float]]]:
+    """단거리/장거리 여부에 따라 적절한 엡실론 값을 적용하여 경로 선을 RDP 알고리즘으로 단순화합니다.
+
+    Args:
+        outbound_raw (List[List[float]]): Outbound 경로 좌표 리스트
+        inbound_raw (List[List[float]]): Inbound 경로 좌표 리스트
+        total_distance (float): 총 노선 거리 (km)
+
+    Returns:
+        Tuple[List[List[float]], List[List[float]]]: 단순화된 [outbound_raw, inbound_raw]
+    """
     epsilon_val = 0.1
     if total_distance < 3000.0:
         epsilon_val = 0.03
@@ -454,19 +523,81 @@ def calculate_route_geometry(
     if inbound_raw:
         inbound_raw = simplify_polyline(inbound_raw, epsilon=epsilon_val)
 
-    # D. 마지막에 날짜변경선을 기준으로 쪼개는 대신 단일 세그먼트로 감싸서 넘김
+    return outbound_raw, inbound_raw
+
+
+def calculate_route_geometry(
+    db: Session,
+    port_rotation: str,
+    apply_offset: bool = True,
+    offset_km: float = 60.0,
+) -> Dict[str, Any]:
+    """해상 노선의 전체 지오메트리를 계산합니다.
+
+    Args:
+        db (Session): DB 세션
+        port_rotation (str): 항구 로테이션 문자열 (예: "CNSHA-USLAX-KRPUS")
+        apply_offset (bool): 경로 병렬 이격(offset) 적용 여부
+        offset_km (float): 이격 거리 (km)
+
+    Returns:
+        Dict[str, Any]: {outbound: GeoJSON, inbound: GeoJSON, ...} 형태의 결과 딕셔너리
+    """
+    port_names = parse_port_rotation(port_rotation)
+
+    # 1단계: 항구 매칭
+    coords_list = _match_port_coordinates(db, port_names)
+
+    if len(coords_list) < 2:
+        return {
+            "outbound": [], "inbound": [],
+            "outbound_arrows": [], "inbound_arrows": [],
+            "total_distance_km": 0,
+            "segment_distances": [],
+        }
+
+    # 2단계: 회차점 탐색
+    turn_idx = _find_turn_index(coords_list)
+
+    # 3단계: Outbound/Inbound 분할 해상 경로 생성 및 개별 구간 거리 연산
+    outbound_raw, inbound_raw, segment_distances, segment_midpoints = _build_divided_unwrapped_lines(
+        db, coords_list, turn_idx, apply_offset, offset_km
+    )
+
+    # 4단계: 글로벌 경도 보정
+    _apply_global_lng_shift(outbound_raw, inbound_raw)
+
+    # 미드포인트에도 동일한 shift_offset 적용
+    ref_lng = None
+    if outbound_raw:
+        ref_lng = outbound_raw[0][1]
+    elif inbound_raw:
+        ref_lng = inbound_raw[0][1]
+
+    if ref_lng is not None:
+        ref_lng_norm = normalize_lng_pacific(ref_lng)
+        shift_offset = ref_lng_norm - ref_lng
+        for pt in segment_midpoints:
+            pt[1] += shift_offset
+
+    # 5단계: 총 거리 계산
+    total_distance = sum(segment_distances)
+
+    # 6단계: 경로 단순화
+    outbound_raw, inbound_raw = _simplify_route_lines(outbound_raw, inbound_raw, total_distance)
+
+    # 7단계: 날짜변경선 분할 패키징
     outbound_lines = split_polyline_at_antimeridian(outbound_raw)
     inbound_lines = split_polyline_at_antimeridian(inbound_raw)
-
-    outbound_arrows = _extract_arrow_points(outbound_slice)
-    inbound_arrows = _extract_arrow_points(inbound_slice)
 
     return {
         "outbound": outbound_lines,
         "inbound": inbound_lines,
-        "outbound_arrows": outbound_arrows,
-        "inbound_arrows": inbound_arrows,
+        "outbound_arrows": [],
+        "inbound_arrows": [],
         "total_distance_km": round(total_distance, 1),
+        "segment_distances": [round(d, 1) for d in segment_distances],
+        "segment_midpoints": segment_midpoints,
     }
 
 
@@ -497,8 +628,8 @@ def get_cached_geometry(db: Session, route_idx: int, port_rotation: str) -> Opti
                 }),
                 "total_distance_km": result[3] or 0,
             }
-    except Exception:
-        pass
+    except Exception as e:
+        logger.warning("지오메트리 캐시 조회 실패 (route_idx=%d): %s", route_idx, e)
 
     return None
 
@@ -511,6 +642,8 @@ def save_geometry_cache(
     arrow_data = json.dumps({
         "outbound_arrows": geometry.get("outbound_arrows", []),
         "inbound_arrows": geometry.get("inbound_arrows", []),
+        "segment_distances": geometry.get("segment_distances", []),
+        "segment_midpoints": geometry.get("segment_midpoints", []),
     })
 
     try:
@@ -535,7 +668,8 @@ def save_geometry_cache(
             }
         )
         db.commit()
-    except Exception:
+    except Exception as e:
+        logger.warning("지오메트리 캐시 저장 실패 (route_idx=%d): %s", route_idx, e)
         db.rollback()
 
 
