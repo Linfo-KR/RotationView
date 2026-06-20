@@ -1,6 +1,7 @@
 import { useEffect } from 'react';
 import { Marker, Popup, useMap, useMapEvents } from 'react-leaflet';
 import L from 'leaflet';
+import { getOptimizedBounds } from './mapHelpers';
 
 /**
  * 항만 마커 아이콘을 생성합니다.
@@ -103,6 +104,14 @@ const ZoomHandler = () => {
  */
 const MapUpdater = ({ coordinates }) => {
   const map = useMap();
+  
+  useEffect(() => {
+    window.leafletMap = map;
+    return () => {
+      window.leafletMap = null;
+    };
+  }, [map]);
+
   useEffect(() => {
     if (!coordinates) return;
     try {
@@ -114,10 +123,12 @@ const MapUpdater = ({ coordinates }) => {
         if (coordinates.inbound) coordinates.inbound.forEach(line => allPoints.push(...line));
       }
       if (allPoints.length > 0) {
-        const latLngs = allPoints.map(p => L.latLng(p[0], p[1], true));
-        const bounds = L.latLngBounds(latLngs);
-        if (bounds.isValid()) {
-          map.fitBounds(bounds, { padding: [60, 60], maxZoom: 5 });
+        const boundsData = getOptimizedBounds(allPoints);
+        if (boundsData) {
+          const bounds = L.latLngBounds(boundsData);
+          if (bounds.isValid()) {
+            map.fitBounds(bounds, { padding: [60, 60], maxZoom: 5 });
+          }
         }
       }
     } catch (e) {
@@ -147,9 +158,11 @@ const FitBoundsControl = ({ coordinates }) => {
               if (coordinates.inbound) coordinates.inbound.forEach(line => allPoints.push(...line));
             }
             if (allPoints.length > 0) {
-              const latLngs = allPoints.map(p => L.latLng(p[0], p[1], true));
-              const bounds = L.latLngBounds(latLngs);
-              if (bounds.isValid()) map.fitBounds(bounds, { padding: [60, 60], maxZoom: 5 });
+              const boundsData = getOptimizedBounds(allPoints);
+              if (boundsData) {
+                const bounds = L.latLngBounds(boundsData);
+                if (bounds.isValid()) map.fitBounds(bounds, { padding: [60, 60], maxZoom: 5 });
+              }
             }
           }}
           className="bg-white hover:bg-gray-100 text-[#003399] font-bold p-2 text-sm rounded shadow-md border border-gray-300 flex items-center justify-center cursor-pointer transition-colors"

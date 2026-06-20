@@ -277,3 +277,30 @@ export const splitPolylineAtAntimeridian = (path) => {
 
   return multiLine;
 };
+
+/**
+ * 날짜변경선(180도) 및 태평양 횡단을 고려한 최적 뷰포트 Bounds를 구합니다.
+ * 백엔드에서 언래핑된 좌표계를 기준으로 뷰포트가 찢어지지 않도록 패딩을 포함한 경계 좌표를 리턴합니다.
+ */
+export const getOptimizedBounds = (points) => {
+  if (!points || points.length === 0) return null;
+
+  let minLat = 90, maxLat = -90;
+  let minLng = Infinity, maxLng = -Infinity;
+
+  points.forEach(([lat, lng]) => {
+    if (lat < minLat) minLat = lat;
+    if (lat > maxLat) maxLat = lat;
+    
+    // 태평양 중심 시프트 정규화 반영
+    const normLng = normalizeLngPacific(lng);
+    if (normLng < minLng) minLng = normLng;
+    if (normLng > maxLng) maxLng = normLng;
+  });
+
+  // 지도 주변부 상하좌우 안전 패딩 마진 2도
+  return [
+    [minLat - 2, minLng - 2],
+    [maxLat + 2, maxLng + 2]
+  ];
+};
