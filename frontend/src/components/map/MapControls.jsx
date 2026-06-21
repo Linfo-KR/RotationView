@@ -6,7 +6,7 @@ import { getOptimizedBounds } from './mapHelpers';
 /**
  * 항만 마커 아이콘을 생성합니다.
  */
-const createPortIcon = (portName, index, total, labelDir = 'bottom', isHovered = false) => {
+const createPortIcon = (portName, index, total, labelDir = 'bottom', labelDist = 20, isHovered = false) => {
   const name = portName || '';
   const isBusan = name.toLowerCase().includes('busan');
   const isStart = index === 0;
@@ -44,27 +44,67 @@ const createPortIcon = (portName, index, total, labelDir = 'bottom', isHovered =
     markerClass += ' port-hovered';
   }
 
-  const dirClass = `label-dir-${labelDir}`;
+  // 방향과 거리에 따른 편차 픽셀 계산
+  let dx = 0;
+  let dy = 0;
+  const dist = labelDist;
+  
+  switch (labelDir) {
+    case 'top': dx = 0; dy = -dist; break;
+    case 'bottom': dx = 0; dy = dist; break;
+    case 'right': dx = dist; dy = 0; break;
+    case 'left': dx = -dist; dy = 0; break;
+    case 'top-right': dx = Math.round(dist * 0.7); dy = -Math.round(dist * 0.7); break;
+    case 'top-left': dx = -Math.round(dist * 0.7); dy = -Math.round(dist * 0.7); break;
+    case 'bottom-right': dx = Math.round(dist * 0.7); dy = Math.round(dist * 0.7); break;
+    case 'bottom-left': dx = -Math.round(dist * 0.7); dy = Math.round(dist * 0.7); break;
+    default: dx = 0; dy = dist;
+  }
+
+  // 지시선(Leader Line) SVG 생성 - 이격거리가 25px를 초과할 경우에만 점선 노출
+  const showLeaderLine = dist > 25;
+  const leaderLineHtml = showLeaderLine ? `
+    <svg class="leader-line-svg" style="position: absolute; top: 0; left: 0; width: 150px; height: 150px; pointer-events: none; overflow: visible; z-index: -1;">
+      <line x1="12" y1="12" x2="${12 + dx}" y2="${12 + dy}" stroke="${isBusan ? '#00B050' : '#888888'}" stroke-width="0.8" stroke-dasharray="2,2" />
+    </svg>
+  ` : '';
+
+  // 라벨 정렬용 CSS 보정 (라벨 박스의 물리적 부착 지점 조절)
+  let labelAlignStyle = '';
+  if (labelDir === 'left') {
+    labelAlignStyle = 'transform: translate(-100%, -50%); margin-left: -4px;';
+  } else if (labelDir === 'right') {
+    labelAlignStyle = 'transform: translate(0, -50%); margin-left: 4px;';
+  } else if (labelDir === 'top') {
+    labelAlignStyle = 'transform: translate(-50%, -100%); margin-top: -4px;';
+  } else if (labelDir === 'bottom') {
+    labelAlignStyle = 'transform: translate(-50%, 0); margin-top: 4px;';
+  } else if (labelDir === 'top-right') {
+    labelAlignStyle = 'transform: translate(0, -100%); margin-left: 2px; margin-top: -2px;';
+  } else if (labelDir === 'top-left') {
+    labelAlignStyle = 'transform: translate(-100%, -100%); margin-left: -2px; margin-top: -2px;';
+  } else if (labelDir === 'bottom-right') {
+    labelAlignStyle = 'transform: translate(0, 0); margin-left: 2px; margin-top: 2px;';
+  } else if (labelDir === 'bottom-left') {
+    labelAlignStyle = 'transform: translate(-100%, 0); margin-left: -2px; margin-top: 2px;';
+  }
 
   return L.divIcon({
     className: 'custom-div-icon',
     html: `
-      <div class="port-marker ${markerClass}">
+      <div class="port-marker ${markerClass}" style="position: relative; width: 24px; height: 24px; overflow: visible;">
         ${dotHtml}
-        <div class="port-label ${dirClass}">${name}</div>
-        ${index !== undefined ? `<div class="seq-badge">${index + 1}</div>` : ''}
+        ${leaderLineHtml}
+        <div class="port-label" style="position: absolute; left: ${12 + dx}px; top: ${12 + dy}px; white-space: nowrap; ${labelAlignStyle}">
+          ${name}
+        </div>
+        ${index !== undefined ? `<div class="seq-badge" style="z-index: 10;">${index + 1}</div>` : ''}
       </div>
     `,
     iconSize: [24, 24],
     iconAnchor: [12, 12],
   });
 };
-
-/**
- * 기항지 마커를 렌더링하는 컴포넌트.
- * 실시간 픽셀 좌표 충돌 검사를 통해 라벨을 8방향으로 스마트 재배치합니다.
- */
-import { useState } from 'react';
 
 const PortMarkers = ({ routePorts, hoveredPortIndex, setHoveredPortIndex }) => {
   const map = useMap();
@@ -125,30 +165,38 @@ const PortMarkers = ({ routePorts, hoveredPortIndex, setHoveredPortIndex }) => {
     const newDirections = {};
     const placedBoxes = [];
 
-    const getLabelBounds = (x, y, text, dir) => {
+    const getLabelBounds = (x, y, text, dir, dist) => {
       const textLen = text ? text.length : 10;
       const w = textLen * 6.0 + 8;
       const h = 14;
       
+      let dx = 0;
+      let dy = 0;
       switch (dir) {
-        case 'top':
-          return { x1: x - w / 2, y1: y - 22, x2: x + w / 2, y2: y - 8 };
-        case 'right':
-          return { x1: x + 12, y1: y - h / 2, x2: x + 12 + w, y2: y + h / 2 };
-        case 'left':
-          return { x1: x - 12 - w, y1: y - h / 2, x2: x - 12, y2: y + h / 2 };
-        case 'top-right':
-          return { x1: x + 10, y1: y - 18, x2: x + 10 + w, y2: y - 4 };
-        case 'top-left':
-          return { x1: x - 10 - w, y1: y - 18, x2: x - 10, y2: y - 4 };
-        case 'bottom-right':
-          return { x1: x + 10, y1: y + 8, x2: x + 10 + w, y2: y + 22 };
-        case 'bottom-left':
-          return { x1: x - 10 - w, y1: y + 8, x2: x - 10, y2: y + 22 };
-        case 'bottom':
-        default:
-          return { x1: x - w / 2, y1: y + 6, x2: x + w / 2, y2: y + 20 };
+        case 'top': dx = 0; dy = -dist; break;
+        case 'bottom': dx = 0; dy = dist; break;
+        case 'right': dx = dist; dy = 0; break;
+        case 'left': dx = -dist; dy = 0; break;
+        case 'top-right': dx = dist * 0.7; dy = -dist * 0.7; break;
+        case 'top-left': dx = -dist * 0.7; dy = -dist * 0.7; break;
+        case 'bottom-right': dx = dist * 0.7; dy = dist * 0.7; break;
+        case 'bottom-left': dx = -dist * 0.7; dy = dist * 0.7; break;
       }
+
+      const lx = x + dx;
+      const ly = y + dy;
+      
+      let x1 = lx - w / 2, y1 = ly;
+      if (dir === 'left') { x1 = lx - w; y1 = ly - h / 2; }
+      else if (dir === 'right') { x1 = lx; y1 = ly - h / 2; }
+      else if (dir === 'top') { x1 = lx - w / 2; y1 = ly - h; }
+      else if (dir === 'bottom') { x1 = lx - w / 2; y1 = ly; }
+      else if (dir === 'top-right') { x1 = lx; y1 = ly - h; }
+      else if (dir === 'top-left') { x1 = lx - w; y1 = ly - h; }
+      else if (dir === 'bottom-right') { x1 = lx; y1 = ly; }
+      else if (dir === 'bottom-left') { x1 = lx - w; y1 = ly; }
+
+      return { x1, y1, x2: x1 + w, y2: y1 + h };
     };
 
     const intersects = (box1, box2) => {
@@ -161,36 +209,48 @@ const PortMarkers = ({ routePorts, hoveredPortIndex, setHoveredPortIndex }) => {
       const text = port.port_name;
 
       const candidates = ['bottom', 'top', 'right', 'left', 'top-right', 'top-left', 'bottom-right', 'bottom-left'];
+      const distances = [20, 36, 52]; // 겹침 정도에 따라 이격거리 점진적 확대
+      
       let bestDir = 'bottom';
+      let bestDist = 20;
       let minOverlapArea = Infinity;
+      let foundNoOverlap = false;
 
-      for (const dir of candidates) {
-        const box = getLabelBounds(x, y, text, dir);
-        let overlapArea = 0;
+      for (const dist of distances) {
+        for (const dir of candidates) {
+          const box = getLabelBounds(x, y, text, dir, dist);
+          let overlapArea = 0;
 
-        for (const placed of placedBoxes) {
-          if (intersects(box, placed)) {
-            const ix1 = Math.max(box.x1, placed.x1);
-            const iy1 = Math.max(box.y1, placed.y1);
-            const ix2 = Math.min(box.x2, placed.x2);
-            const iy2 = Math.min(box.y2, placed.y2);
-            overlapArea += (ix2 - ix1) * (iy2 - iy1);
+          for (const placed of placedBoxes) {
+            if (intersects(box, placed)) {
+              const ix1 = Math.max(box.x1, placed.x1);
+              const iy1 = Math.max(box.y1, placed.y1);
+              const ix2 = Math.min(box.x2, placed.x2);
+              const iy2 = Math.min(box.y2, placed.y2);
+              overlapArea += (ix2 - ix1) * (iy2 - iy1);
+            }
+          }
+
+          if (overlapArea === 0) {
+            bestDir = dir;
+            bestDist = dist;
+            foundNoOverlap = true;
+            break;
+          }
+
+          if (overlapArea < minOverlapArea) {
+            minOverlapArea = overlapArea;
+            bestDir = dir;
+            bestDist = dist;
           }
         }
-
-        if (overlapArea === 0) {
-          bestDir = dir;
+        if (foundNoOverlap) {
           break;
-        }
-
-        if (overlapArea < minOverlapArea) {
-          minOverlapArea = overlapArea;
-          bestDir = dir;
         }
       }
 
-      newDirections[port.port_code + '-' + port.idx] = bestDir;
-      const finalBox = getLabelBounds(x, y, text, bestDir);
+      newDirections[port.port_code + '-' + port.idx] = { dir: bestDir, dist: bestDist };
+      const finalBox = getLabelBounds(x, y, text, bestDir, bestDist);
       placedBoxes.push(finalBox);
     });
 
@@ -200,13 +260,13 @@ const PortMarkers = ({ routePorts, hoveredPortIndex, setHoveredPortIndex }) => {
   return (
     <>
       {routePorts.map((port, idx) => {
-        const dir = directions[port.port_code + '-' + idx] || 'bottom';
+        const { dir, dist } = directions[port.port_code + '-' + idx] || { dir: 'bottom', dist: 20 };
         const isHovered = idx === hoveredPortIndex;
         return (
           <Marker
             key={`${port.port_code}-${idx}`}
             position={L.latLng(port.lat, port.lng, true)}
-            icon={createPortIcon(port.port_name, idx, routePorts.length, dir, isHovered)}
+            icon={createPortIcon(port.port_name, idx, routePorts.length, dir, dist, isHovered)}
             eventHandlers={{
               mouseover: () => setHoveredPortIndex(idx),
               mouseout: () => setHoveredPortIndex(null),
@@ -249,7 +309,7 @@ const ZoomHandler = () => {
 /**
  * MapUpdater: 경로 좌표에 맞게 지도 범위를 자동 조정합니다.
  */
-const MapUpdater = ({ coordinates, center }) => {
+const MapUpdater = ({ coordinates, center, region }) => {
   const map = useMap();
   
   useEffect(() => {
@@ -279,21 +339,28 @@ const MapUpdater = ({ coordinates, center }) => {
         if (boundsData) {
           const bounds = L.latLngBounds(boundsData);
           if (bounds.isValid()) {
-            map.fitBounds(bounds, { padding: [60, 60], maxZoom: 5 });
+            // 단거리 리전 여부 감지
+            const rName = (region || '').toLowerCase();
+            const isShortRegion = rName.includes('japan') || rName.includes('korea') || rName.includes('china') || rName.includes('russia');
+            
+            const fitPadding = isShortRegion ? [100, 100] : [60, 60];
+            const fitMaxZoom = isShortRegion ? 7 : 5;
+            
+            map.fitBounds(bounds, { padding: fitPadding, maxZoom: fitMaxZoom });
           }
         }
       }
     } catch (e) {
       console.warn('Invalid bounds', e);
     }
-  }, [coordinates, center, map]);
+  }, [coordinates, center, region, map]);
   return null;
 };
 
 /**
  * FitBoundsControl: 경로 fit 버튼.
  */
-const FitBoundsControl = ({ coordinates }) => {
+const FitBoundsControl = ({ coordinates, region }) => {
   const map = useMap();
   return (
     <div className="leaflet-bottom leaflet-right">
@@ -313,7 +380,15 @@ const FitBoundsControl = ({ coordinates }) => {
               const boundsData = getOptimizedBounds(allPoints);
               if (boundsData) {
                 const bounds = L.latLngBounds(boundsData);
-                if (bounds.isValid()) map.fitBounds(bounds, { padding: [60, 60], maxZoom: 5 });
+                if (bounds.isValid()) {
+                  const rName = (region || '').toLowerCase();
+                  const isShortRegion = rName.includes('japan') || rName.includes('korea') || rName.includes('china') || rName.includes('russia');
+                  
+                  const fitPadding = isShortRegion ? [100, 100] : [60, 60];
+                  const fitMaxZoom = isShortRegion ? 7 : 5;
+                  
+                  map.fitBounds(bounds, { padding: fitPadding, maxZoom: fitMaxZoom });
+                }
               }
             }
           }}

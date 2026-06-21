@@ -172,6 +172,48 @@ const MapVisualizer = ({ selectedRoute, allPorts, isTimelineOpen, onRouteUpdated
         </button>
       </div>
 
+      {/* ── 부산항 터미널 & 입출항 스케줄 정보 카드 (Proforma Overlay Card) ── */}
+      {selectedRoute && selectedRoute.proforma && selectedRoute.proforma.length > 0 && (
+        <div className="absolute top-16 right-4 z-[1000] w-64 transition-all duration-300">
+          <div
+            className={`backdrop-blur-md rounded-xl shadow-2xl border overflow-hidden ${
+              isDark ? 'bg-gray-900/90 border-gray-700/80 text-gray-100' : 'bg-white/95 border-gray-200/80 text-gray-800'
+            }`}
+          >
+            <div className="px-4 py-2.5 bg-[#002060] text-white flex items-center justify-between shadow-sm">
+              <span className="text-xs font-bold tracking-wide uppercase">Busan Port Proforma</span>
+              <span className="px-1.5 py-0.5 rounded bg-white/20 text-[9px] font-mono">
+                {selectedRoute.svc || 'SVC'}
+              </span>
+            </div>
+            <div className="p-3 divide-y divide-gray-200/20 max-h-56 overflow-y-auto">
+              {selectedRoute.proforma.map((prof, pIdx) => (
+                <div key={prof.term_id || pIdx} className="py-2 first:pt-0 last:pb-0">
+                  <div className="flex justify-between items-center mb-1">
+                    <span className="text-xs font-bold text-[#3494BA] flex items-center gap-1.5">
+                      <span className="w-1.5 h-1.5 rounded-full bg-[#00B050]" />
+                      {prof.terminal_name}
+                    </span>
+                    {prof.wtp && (
+                      <span className={`text-[10px] font-semibold px-1.5 py-0.5 rounded ${
+                        isDark ? 'bg-gray-800 text-gray-300' : 'bg-gray-100 text-gray-600'
+                      }`}>
+                        {prof.wtp} TEU/w
+                      </span>
+                    )}
+                  </div>
+                  {prof.sch && (
+                    <div className="text-[10px] opacity-75 font-mono flex items-center gap-1 mt-0.5">
+                      📅 {prof.sch}
+                    </div>
+                  )}
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* ── 범례 ── */}
       {lineGeometry && (
         <div className="absolute top-3 left-[340px] z-[1000]">
@@ -256,8 +298,8 @@ const MapVisualizer = ({ selectedRoute, allPorts, isTimelineOpen, onRouteUpdated
 
         <RouteLayer lineGeometry={lineGeometry} theme={theme} isSingleColor={isSingleColor} />
         <PortMarkers routePorts={routePorts} hoveredPortIndex={hoveredPortIndex} setHoveredPortIndex={setHoveredPortIndex} />
-        <MapUpdater coordinates={lineGeometry} center={mapCenter} />
-        <FitBoundsControl coordinates={lineGeometry} />
+        <MapUpdater coordinates={lineGeometry} center={mapCenter} region={selectedRoute?.region} />
+        <FitBoundsControl coordinates={lineGeometry} region={selectedRoute?.region} />
       </MapContainer>
     </div>
   );
